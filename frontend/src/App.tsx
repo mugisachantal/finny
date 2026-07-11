@@ -5,6 +5,7 @@ import Signup from "./pages/Signup";
 import Home from "./pages/Home";
 import UserOnboarding from "./pages/User_onboarding";
 import LenderOnboarding from "./pages/LenderOnboarding";
+import LendersDashboard from "./pages/lenders/LendersDashboard";
 
 function App() {
   return (
@@ -17,6 +18,7 @@ function App() {
         <Route path="/lender-onboarding" element={<LenderOnboarding />} />
         <Route path="/" element={<Landing />} />
         <Route path="/home" element={<Home />} />
+        <Route path="/lenders/dashboard" element={<LendersDashboard />} />
       </Routes>
     </BrowserRouter>
   );
