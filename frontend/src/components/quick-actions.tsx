@@ -1,33 +1,63 @@
-export const QuickActions = () => {
-  return (
-    <section className="flex items-center space-y-10 flex-col">
-      <div className="w-sm text-center">
-        <h1 className="text-3xl">Welcome Back, Jerome !</h1>
-      </div>
-      <div className="w-xl p-5 border rounded-3xl space-y-3">
-        <form className="flex items-center justify-between">
-          <input
-            placeholder="What do you need ?"
-            className="border-0 outline-none focus:outiline-none focus:ring-0"
-          />
-          <button className="bg-primary/70 text-white h-12 w-12 rounded-lg ml-2"></button>
-        </form>
+import { useState } from "react";
 
-        <div className="flex items-center space-x-2 w-full">
-          <button className="px-6 h-10 bg-teal-800/60 text-white rounded-lg text-sm w-1/3">
-            Get A Loan
-          </button>
-          <button className="px-6 h-10 bg-yellow-800/60 text-white rounded-lg text-sm w-1/3">
-            History
-          </button>
-          <button className="px-6 h-10 bg-[#BA5A31]/60 text-white rounded-lg text-sm w-1/3">
-            Providers
-          </button>
-        </div>
+export const QuickActions = () => {
+  const [amount, setAmount] = useState("200000");
+  const [message, setMessage] = useState("");
+  const [recommendation, setRecommendation] = useState<string | null>(null);
+  const [chatAnswer, setChatAnswer] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
+
+  const getRecommendation = async () => {
+    setLoading(true);
+    const response = await fetch("/api/finny/recommend", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        requestedAmount: Number(amount),
+        requestedTenure: 30,
+        urgency: "medium",
+        borrowerProfile: { incomeBand: "low", borrowingExperience: "first_time" },
+      }),
+    });
+    const data = await response.json();
+    setRecommendation(data.recommendations?.[0]?.name ? `Top match: ${data.recommendations[0].name} — UGX ${data.recommendations[0].totalRepayment}` : "No recommendation available yet.");
+    setLoading(false);
+  };
+
+  const askChat = async () => {
+    if (!message.trim()) return;
+    const response = await fetch("/api/finny/chat", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        message,
+        userProfile: { income_band: "low", education_level: "secondary", region: "kampala" },
+        currentApplication: { requested_amount: Number(amount), requested_tenure_days: 30, purpose: "emergency" },
+      }),
+    });
+    const data = await response.json();
+    setChatAnswer(data.answer || "I can help explain loan costs and fraud warnings.");
+    setMessage("");
+  };
+
+  return (
+    <div className="w-md p-5 border rounded-3xl space-y-4 bg-white">
+      <div className="space-y-2">
+        <label className="text-sm font-medium">Loan amount (UGX)</label>
+        <input value={amount} onChange={(event) => setAmount(event.target.value)} className="w-full border rounded-lg px-3 py-2" />
       </div>
-      <p className="text-xs w-md text-center text-black/60">
-        Finny is an AI. It can make mistakes, please review the output
-      </p>
-    </section>
+
+      <button onClick={getRecommendation} className="w-full bg-[#BA5A31] text-white rounded-lg h-10" disabled={loading}>
+        {loading ? "Checking options..." : "Get recommendation"}
+      </button>
+      {recommendation && <p className="text-sm text-slate-700">{recommendation}</p>}
+
+      <div className="space-y-2">
+        <label className="text-sm font-medium">Ask Finny</label>
+        <input value={message} onChange={(event) => setMessage(event.target.value)} placeholder="Is this loan safe?" className="w-full border rounded-lg px-3 py-2" />
+        <button onClick={askChat} className="w-full border rounded-lg h-10">Ask</button>
+      </div>
+      {chatAnswer && <p className="text-sm text-slate-700">{chatAnswer}</p>}
+    </div>
   );
 };
