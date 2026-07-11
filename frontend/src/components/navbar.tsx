@@ -1,3 +1,4 @@
+import { Link } from "react-router";
 import { LuChevronDown, LuUserRound } from "react-icons/lu";
 
 export const Navbar = () => {
@@ -5,10 +6,10 @@ export const Navbar = () => {
     <header className="w-screen bg-background fixed top-0 left-0 flex items-center justify-center h-20 z-50">
       <div className="w-full mx-auto max-w-7xl flex items-center justify-between">
         <div className="flex items-center space-x-10">
-          <div className="flex items-center space-x-5">
+          <Link to="/" className="flex items-center space-x-5 no-underline">
             <img src="/logo.svg" className="w-10 h-10 object-cover" />
             <h1 className="text-2xl font-semibold">finny</h1>
-          </div>
+          </Link>
           <nav className="flex items-center space-x-6">
             <a href="#">Providers</a>
             <a href="#">Loan History</a>

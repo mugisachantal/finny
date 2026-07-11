@@ -206,37 +206,33 @@ export default function Landing() {
         </div>
       </div>
 
-      {/* Header / Nav */}
-      <header className="sticky top-0 z-20 bg-soft-linen/95 px-6 py-4 backdrop-blur">
-        <div className="mx-auto flex max-w-7xl items-center justify-between">
-          <Link to="/" className="flex items-center gap-3 no-underline">
-            <div className="flex h-11 w-11 items-center justify-center rounded-full bg-muted-teal">
-              <div className="relative h-[22px] w-[14px] rounded-[50%_50%_50%_50%/_10%_10%_90%_90%] border-2 border-white after:absolute after:left-0 after:right-0 after:top-[5px] after:h-px after:bg-white after:shadow-[0_5px_0_0_white,0_10px_0_0_white] after:content-['']" />
-            </div>
-            <span className="text-[22px] font-extrabold tracking-[-0.06em] text-ebony">
-              FINNY
-            </span>
-          </Link>
-
-          <nav className="hidden items-center gap-8 lg:flex">
-            {[
-              ["Home", "#hero"],
-              ["How it Works", "#works"],
-              ["Features", "#features"],
-              ["FAQ", "#faq"],
-              ["Contact", "#contact"],
-            ].map(([label, href]) => (
-              <a
-                key={label}
-                href={href}
-                className="text-sm font-medium text-charcoal no-underline transition-colors hover:text-muted-teal"
-              >
-                {label}
-              </a>
-            ))}
-          </nav>
-
-          <div className="flex items-center gap-3">
+      {/* Header / Nav — navbar layout */}
+      <header className="w-screen bg-background sticky top-0 flex items-center justify-center h-20 z-50">
+        <div className="w-full mx-auto max-w-7xl flex items-center justify-between">
+          <div className="flex items-center space-x-10">
+            <Link to="/" className="flex items-center space-x-5 no-underline">
+              <img src="/logo.svg" className="w-10 h-10 object-cover" />
+              <h1 className="text-2xl font-semibold">finny</h1>
+            </Link>
+            <nav className="flex items-center space-x-6">
+              {[
+                ["Home", "#hero"],
+                ["How it Works", "#works"],
+                ["Features", "#features"],
+                ["FAQ", "#faq"],
+                ["Contact", "#contact"],
+              ].map(([label, href]) => (
+                <a
+                  key={label}
+                  href={href}
+                  className="text-sm font-medium text-charcoal no-underline transition-colors hover:text-muted-teal"
+                >
+                  {label}
+                </a>
+              ))}
+            </nav>
+          </div>
+          <div className="flex items-center justify-end space-x-5">
             <Link
               to="/login"
               className="hidden text-sm font-semibold text-ebony no-underline md:inline-block"

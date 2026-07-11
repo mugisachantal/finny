@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "react-router";
 import {
   LuChevronDown,
   LuUserRound,
@@ -39,10 +40,10 @@ const LendersDashboard = () => {
       <header className="flex items-center justify-center border-b border-border bg-background px-6 py-3">
         <div className="flex items-center justify-between w-full max-w-7xl">
           <div className="flex items-center gap-8">
-          <div className="flex items-center gap-2.5">
+          <Link to="/" className="flex items-center gap-2.5 no-underline">
             <img src="/logo.svg" className="w-8 h-8 shrink-0" />
             <h1 className="text-xl font-semibold text-foreground">finny</h1>
-          </div>
+          </Link>
 
           <nav className="flex items-center gap-1">
             {navLinks.map(({ id, label }) => {
