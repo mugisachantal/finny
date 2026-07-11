@@ -1,4 +1,6 @@
 import { Link } from "react-router";
+import { Footer } from "../components/sections/footer";
+import { LenderOnboardingCard } from "../components/sections/LenderOnboardingCard";
 
 const features = [
 	{
@@ -128,6 +130,8 @@ export default function Landing() {
 				</div>
 			</section>
 
+			<LenderOnboardingCard />
+
 			<section id="features" className="bg-[color:var(--color-soft-linen)] px-[10%] py-20">
 				<div className="mx-auto grid max-w-7xl gap-6 md:grid-cols-2 xl:grid-cols-4">
 					{features.map((feature) => (
@@ -207,6 +211,8 @@ export default function Landing() {
 					</div>
 				</div>
 			</section>
+
+			<Footer />
 		</main>
 	);
 }

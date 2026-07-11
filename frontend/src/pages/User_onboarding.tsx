@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Footer } from "../components/sections/footer";
 
 const steps = [
 	{
@@ -253,6 +254,7 @@ export default function UserOnboarding() {
 					</form>
 				</div>
 			</section>
+			<Footer />
 		</main>
 	);
 }
