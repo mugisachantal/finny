@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Borrower;
 use App\Models\User;
 
 return [
@@ -42,6 +43,11 @@ return [
             'driver' => 'session',
             'provider' => 'users',
         ],
+
+        'borrower' => [
+            'driver' => 'sanctum',
+            'provider' => 'borrowers',
+        ],
     ],
 
     /*
@@ -65,6 +71,11 @@ return [
         'users' => [
             'driver' => 'eloquent',
             'model' => env('AUTH_MODEL', User::class),
+        ],
+
+        'borrowers' => [
+            'driver' => 'eloquent',
+            'model' => Borrower::class,
         ],
 
         // 'users' => [
