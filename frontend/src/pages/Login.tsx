@@ -7,7 +7,7 @@ export default function Login() {
   const navigate = useNavigate();
   const { login } = useAuth();
   const [showPassword, setShowPassword] = useState(false);
-  const [phoneNumber, setPhoneNumber] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -21,7 +21,7 @@ export default function Login() {
       const res = await fetch("/api/v1/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json", Accept: "application/json" },
-        body: JSON.stringify({ phone_number: phoneNumber, password }),
+        body: JSON.stringify({ email, password }),
       });
 
       const data = (await res.json()) as {
@@ -70,15 +70,15 @@ export default function Login() {
           <form className="space-y-4" onSubmit={(e) => void handleSubmit(e)}>
             <label className="block">
               <span className="mb-2 block text-sm font-medium text-[color:var(--color-ebony)]">
-                Phone Number
+                Email Address
               </span>
               <input
-                type="tel"
-                placeholder="+256 XXX XXX XXX"
-                autoComplete="tel"
+                type="email"
+                placeholder="Enter your email address"
+                autoComplete="email"
                 required
-                value={phoneNumber}
-                onChange={(e) => setPhoneNumber(e.target.value)}
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
                 disabled={isSubmitting}
                 className="w-full rounded-xl border border-[color:var(--color-dust-grey)] bg-white px-4 py-3 text-sm text-[color:var(--color-charcoal)] outline-none transition-all duration-200 placeholder:text-[color:var(--color-charcoal)]/40 focus:border-[color:var(--color-muted-teal)] focus:shadow-[0_0_0_4px_rgba(164,194,165,0.16)] disabled:opacity-50"
               />

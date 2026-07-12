@@ -30,8 +30,15 @@ function timeAgo(isoString: string): string {
   return `${days}d ago`;
 }
 
+function authHeaders(token: string | null): HeadersInit {
+  return {
+    "Content-Type": "application/json",
+    ...(token ? { Authorization: `Bearer ${token}` } : {}),
+  };
+}
+
 export function FloatingChatbot({ isOpen, onClose }: FloatingChatbotProps) {
-  const { user } = useAuth();
+  const { user, token } = useAuth();
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState<ChatMessage[]>([WELCOME]);
   const [isLoading, setIsLoading] = useState(false);
@@ -47,10 +54,10 @@ export function FloatingChatbot({ isOpen, onClose }: FloatingChatbotProps) {
   const fetchConversations = useCallback(async () => {
     setSidebarLoading(true);
     try {
-      const res = await fetch("/conversations");
+      const res = await fetch("/api/v1/chat/conversations", { headers: authHeaders(token) });
       if (res.ok) {
-        const data = (await res.json()) as ConversationSummary[];
-        setConversations(data);
+        const data = (await res.json()) as { data: ConversationSummary[] };
+        setConversations(data.data ?? []);
       }
     } catch {
       // sidebar failures are non-critical
@@ -74,14 +81,12 @@ export function FloatingChatbot({ isOpen, onClose }: FloatingChatbotProps) {
   const loadConversation = async (convId: string) => {
     setActiveConversationId(convId);
     try {
-      const res = await fetch(`/conversations/${convId}`);
+      const res = await fetch(`/api/v1/chat/conversations/${convId}`, { headers: authHeaders(token) });
       if (!res.ok) return;
-      const data = (await res.json()) as {
-        id: string;
-        title: string;
-        history: Array<{ role: string; content: string }>;
-        createdAt: string;
+      const envelope = (await res.json()) as {
+        data: { id: string; title: string; history: Array<{ role: string; content: string }>; createdAt: string };
       };
+      const data = envelope.data;
       const loaded: ChatMessage[] = data.history.map((h) => ({
         role: h.role === "assistant" ? "bot" : "user",
         text: h.content,
@@ -102,9 +107,9 @@ export function FloatingChatbot({ isOpen, onClose }: FloatingChatbotProps) {
     setIsLoading(true);
 
     try {
-      const response = await fetch("/chat", {
+      const response = await fetch("/api/v1/chat/message", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: authHeaders(token),
         body: JSON.stringify({
           message: trimmedMessage,
           conversationHistory: [],
@@ -115,11 +120,10 @@ export function FloatingChatbot({ isOpen, onClose }: FloatingChatbotProps) {
 
       if (!response.ok) throw new Error(`HTTP ${response.status}`);
 
-      const data = (await response.json()) as {
-        reply: string;
-        action?: { type: string | null };
-        conversationId: string;
+      const envelope = (await response.json()) as {
+        data: { reply: string; action?: { type: string | null }; conversationId: string };
       };
+      const data = envelope.data;
       const reply = data.reply ?? "Sorry, I couldn't understand that response.";
 
       if (!activeConversationId && data.conversationId) {

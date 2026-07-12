@@ -1,0 +1,35 @@
+meta {
+  name: Chat Message
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{finny_ai_base}}/api/v1/chat/message
+  body: json
+  auth: bearer
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  "message": "What interest rates can I expect for a small business loan?",
+  "userProfile": {
+    "userId": "{{user_id}}",
+    "income_band": "low",
+    "education_level": "secondary",
+    "region": "central"
+  }
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+script:post-response {
+  if (res.status === 200 && res.body.data) {
+    bru.setVar("conversation_id", res.body.data.conversationId);
+  }
+}

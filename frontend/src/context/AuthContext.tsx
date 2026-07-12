@@ -4,8 +4,8 @@ import type { ReactNode } from "react";
 export type AuthUser = {
   id: number;
   full_name: string;
-  phone_number: string;
-  email: string | null;
+  email: string;
+  phone_number: string | null;
   income_bracket: string;
   education_level: string;
   district: string;

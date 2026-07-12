@@ -1,26 +1,10 @@
-"""
-tools.py
-
-This is what gives the chatbot "awareness" of the rest of the system.
-Instead of stuffing every module's data into every prompt (expensive,
-and mostly irrelevant to any single question), we describe each data
-source as a TOOL the model can call when it actually needs it — same
-mechanism as any OpenAI-compatible function-calling setup, which is
-what Groq's API uses.
-
-Each tool's "description" is doing real work here: it's the only thing
-telling the model WHEN to use it. Keep these specific.
-"""
-
 from app.module_connectors import (
     get_lender_info,
     get_loan_recommendations_preview,
     get_user_applications,
 )
 
-# Groq's API is OpenAI-compatible, so tools are described in the
-# OpenAI "function calling" JSON shape: a list of
-# {"type": "function", "function": {name, description, parameters}}.
+# Each tool's "description" controls WHEN the model calls it — keep these specific.
 TOOLS = [
     {
         "type": "function",
@@ -108,11 +92,6 @@ TOOLS = [
 
 
 def execute_tool(name: str, args: dict, context: dict | None = None) -> dict | list:
-    """
-    Executes a tool call by name. `context` carries request-scoped info
-    (like the current user_id) that tools need but shouldn't be
-    something the model has to supply itself.
-    """
     context = context or {}
 
     if name == "get_lender_info":

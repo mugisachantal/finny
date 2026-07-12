@@ -1,33 +1,3 @@
-"""
-system_prompt.py
-
-This function assembles the actual instructions sent to the model on
-every message. Kept separate from server.py so you can iterate on
-prompt wording without touching request-handling code.
-
-Design choices worth understanding:
-  1. We ask for STRUCTURED JSON output (reply + action) on the FINAL
-     answer, instead of trying to detect intent from free text
-     afterwards. Far more reliable than regex/keyword matching.
-  2. The curated knowledge base is injected in full on every request —
-     small enough (a few KB) that this is simpler and more reliable
-     than building real RAG for it. Separately, the model also has
-     TOOLS (see tools.py) it can call to pull live, request-specific
-     data from other app modules — the lender database, this user's
-     own applications, and a scoring preview.
-  3. General financial concepts (not Uganda-specific) can be answered
-     from the model's own broader knowledge — only Uganda-specific
-     claims must be grounded in the reference text/tools below.
-  4. The user profile is injected so answers can be tailored (e.g. a
-     first-time borrower gets more caution and explanation).
-  5. The bot is instructed to behave like a proactive COMPANION, not a
-     passive Q&A bot: it should guide with short follow-up questions
-     when key info is missing, personalize using the user's profile,
-     teach a relevant concept whenever it recommends something, and
-     explain the REASONING behind a ranking rather than just naming a
-     winner. See the "HOW TO BEHAVE LIKE A COMPANION" section below.
-"""
-
 from app.knowledge_base import KNOWLEDGE_BASE
 
 
@@ -220,12 +190,6 @@ def _summarize_profile(profile: dict) -> str:
 
 
 def _personalization_hint(profile: dict) -> str:
-    """
-    Turns the raw profile into a concrete instruction the model can act
-    on, instead of leaving personalization as a vague suggestion. This
-    is what makes traits like incomeBand or hasPriorLoans actually show
-    up in the tone of a reply rather than sitting unused in the prompt.
-    """
     if not profile:
         return (
             "No profile is available, so default to a first-time-borrower "

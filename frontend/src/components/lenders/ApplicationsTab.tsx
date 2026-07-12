@@ -127,9 +127,6 @@ const ApplicationsTab = () => {
   };
 
   const handleBlockConfirm = () => {
-    console.log(
-      `Blocked ${selectedClient?.clientName}. Reason: ${blockReason}`,
-    );
     setBlockDialogOpen(false);
     setBlockReason("");
     setSelectedClient(null);

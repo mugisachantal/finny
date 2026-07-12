@@ -1,0 +1,76 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: finny
+      POSTGRES_USER: ${DB_USERNAME:-postgres}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-postgres}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./docker/postgres-init.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USERNAME:-postgres} -d finny"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - finny_net
+
+  core:
+    build:
+      context: ./src/finnycore
+      dockerfile: Dockerfile
+    env_file: ./src/finnycore/.env
+    environment:
+      DB_CONNECTION: pgsql
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_DATABASE: finny
+      DB_USERNAME: ${DB_USERNAME:-postgres}
+      DB_PASSWORD: ${DB_PASSWORD:-postgres}
+      DB_SCHEMA: core
+      DB_SSLMODE: disable
+      INTELLIGENCE_API_URL: http://intel:8000
+    ports:
+      - "8080:8080"
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - finny_net
+
+  intel:
+    build:
+      context: ./finny-ai
+      dockerfile: Dockerfile
+    env_file: ./finny-ai/.env
+    environment:
+      DATABASE_URL: postgresql://${DB_USERNAME:-postgres}:${DB_PASSWORD:-postgres}@postgres:5432/finny
+      DB_SCHEMA: intelligence
+      CORE_API_URL: http://core:8080
+      FRONTEND_URL: http://localhost
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - finny_net
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "80:80"
+    depends_on:
+      - core
+      - intel
+    networks:
+      - finny_net
+
+volumes:
+  postgres_data:
+
+networks:
+  finny_net:
+    driver: bridge

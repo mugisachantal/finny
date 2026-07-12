@@ -1,20 +1,3 @@
-"""
-knowledge_base.py
-
-This is the single most important file in the chatbot, and deliberately
-the one that ISN'T really "code" — it's a plain block of facts the model
-is told to ground its answers in. An LLM will confidently invent Ugandan
-regulatory details if you let it rely on training knowledge alone, which
-is dangerous in the rights/fraud domain specifically. This file is what
-stops that: the system prompt instructs the model to answer from THIS
-text, not from memory, whenever the question touches rights, fraud, or
-reporting.
-
-Treat this as a living document. As your team researches more, update
-this file — you don't need to touch any other code for the chatbot's
-answers to improve.
-"""
-
 KNOWLEDGE_BASE = """
 ## BORROWER RIGHTS IN UGANDA
 

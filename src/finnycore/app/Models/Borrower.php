@@ -6,7 +6,6 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Laravel\Sanctum\HasApiTokens;
 
 /**
  * @property-read string $age_bracket
@@ -14,17 +13,11 @@ use Laravel\Sanctum\HasApiTokens;
  */
 class Borrower extends Authenticatable
 {
-    use HasApiTokens, Notifiable, SoftDeletes;
+    use Notifiable, SoftDeletes;
 
     protected $table = 'borrowers';
 
-    /**
-     * Deliberately excludes: password, nin_image_path, liveliness_check_path.
-     * Those three fields are only ever written from inside
-     * BorrowerRegistrationService, never through mass assignment, so a
-     * stray Borrower::update($request->all()) elsewhere in the codebase
-     * can never overwrite a password hash or a KYC document path.
-     */
+    // password and KYC paths are excluded from mass-assignment; written only via BorrowerRegistrationService.
     protected $fillable = [
         'full_name',
         'date_of_birth',
@@ -55,11 +48,6 @@ class Borrower extends Authenticatable
         'liveliness_verified' => 'boolean',
     ];
 
-    /**
-     * Computed at read time from date_of_birth so it never goes stale
-     * as the borrower ages across a bracket boundary. Used by the
-     * chatbot system prompt and the recommendation engine.
-     */
     public function getAgeBracketAttribute(): string
     {
         $age = $this->date_of_birth?->age;
@@ -76,11 +64,6 @@ class Borrower extends Authenticatable
         };
     }
 
-    /**
-     * Coarser grouping than district, used for chatbot/recommendation
-     * tuning. Derived rather than stored so the district-to-region
-     * mapping can be corrected later without a data migration.
-     */
     public function getRegionAttribute(): string
     {
         // District-to-region mapping helper may not exist in all deployments.

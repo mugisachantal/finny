@@ -1,0 +1,14 @@
+meta {
+  name: Get Conversation
+  type: http
+  seq: 5
+}
+
+get {
+  url: {{finny_ai_base}}/api/v1/chat/conversations/{{conversation_id}}
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}

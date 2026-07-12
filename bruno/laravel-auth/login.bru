@@ -1,0 +1,27 @@
+meta {
+  name: Login
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{laravel_base}}/api/v1/auth/login
+  body: json
+  auth: none
+}
+
+headers {
+  Accept: application/json
+  Content-Type: application/json
+}
+
+body:json {
+  "email": "testuser2@example.com",
+  "password": "Password123!"
+}
+
+script:post-response {
+  if (res.status === 200) {
+    bru.setVar("token", res.body.data.token);
+  }
+}

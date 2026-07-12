@@ -13,9 +13,12 @@ export default defineConfig({
   },
   server: {
     proxy: {
-      "/chat": "http://localhost:8000",
-      "/conversations": "http://localhost:8000",
-      "/api": "http://localhost:8000",
+      "/api/v1/chat": { target: "http://localhost:8000", changeOrigin: true },
+      "/api/v1/recommendations": { target: "http://localhost:8000", changeOrigin: true },
+      "/api/v1/insights": { target: "http://localhost:8000", changeOrigin: true },
+      "/api/v1/auth": { target: "http://localhost:8080", changeOrigin: true },
+      "/api/v1/lenders": { target: "http://localhost:8080", changeOrigin: true },
+      "/api/v1/loans": { target: "http://localhost:8080", changeOrigin: true },
     },
   },
 });

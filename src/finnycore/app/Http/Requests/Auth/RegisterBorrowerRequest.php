@@ -16,11 +16,11 @@ class RegisterBorrowerRequest extends FormRequest
         return [
             'full_name' => ['required', 'string', 'max:150'],
             'date_of_birth' => ['required', 'date', 'before:-18 years'],
+            'email' => ['required', 'email', 'max:255', 'unique:borrowers,email'],
             'phone_number' => [
-                'required', 'string', 'regex:/^\+256[0-9]{9}$/',
+                'nullable', 'string', 'regex:/^\+256[0-9]{9}$/',
                 'unique:borrowers,phone_number',
             ],
-            'email' => ['nullable', 'email', 'max:255', 'unique:borrowers,email'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
 
             'monthly_income_range' => ['nullable', 'string', 'max:50'],

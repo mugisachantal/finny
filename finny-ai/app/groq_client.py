@@ -1,30 +1,3 @@
-"""
-groq_client.py
-
-Why isolate this in its own file: it's the ONLY place that talks to the
-Groq API. That means (a) you can unit-test everything else without a
-real API key by swapping this module for a mock, and (b) if you ever
-need to change providers/models, this is the one file that changes.
-
-It also owns the "the model must return valid JSON" contract: it tries
-to parse the final response, and if the model ever slips and returns
-something that isn't clean JSON (rare, but happens), we fail gracefully
-instead of crashing the whole request.
-
-TOOL USE LOOP: Groq's API is OpenAI-compatible, which shapes tool use
-differently from Anthropic's API:
-  - Tools are declared via the `tools` param, same each call.
-  - When the model wants to call a tool, `finish_reason` comes back as
-    "tool_calls" and `message.tool_calls` holds one or more calls, each
-    with an id, a function name, and a JSON string of arguments.
-  - You respond by appending the assistant's tool-call message AS-IS,
-    then one message per tool call with role="tool", tool_call_id set,
-    and the tool's result as the content.
-  - Call again; repeat until finish_reason is no longer "tool_calls".
-This mirrors the Node/Anthropic version's loop, just shaped for the
-OpenAI-style function-calling contract Groq uses.
-"""
-
 import json
 import os
 
@@ -49,12 +22,6 @@ def _get_client():
 def call_chat_model(
     system_prompt: str, messages: list[dict], context: dict | None = None
 ) -> dict:
-    """
-    :param system_prompt: full system prompt from system_prompt.py
-    :param messages: list of {"role": "user"|"assistant", "content": str}
-    :param context: request-scoped data tools need (e.g. userId)
-    :return: {"reply": str, "action": {"type": str|None, "payload": dict}}
-    """
     context = context or {}
     client = _get_client()
     if not client:
@@ -63,10 +30,8 @@ def call_chat_model(
             "action": {"type": None, "payload": {}},
         }
 
-    # Groq/OpenAI-style APIs put the system prompt INSIDE the messages
-    # list (unlike Anthropic, which takes it as a separate `system`
-    # param) — this is the main structural difference from the Node
-    # version's claudeClient.js.
+    # Groq uses OpenAI-style function calling: system prompt goes inside the messages
+    # list as role="system", unlike Anthropic which takes it as a separate param.
     working_messages = [{"role": "system", "content": system_prompt}, *messages]
 
     for _ in range(Config.MAX_TOOL_ITERATIONS):
@@ -82,8 +47,6 @@ def call_chat_model(
         message = choice.message
 
         if choice.finish_reason == "tool_calls" and message.tool_calls:
-            # Record the assistant's tool-call turn exactly as returned,
-            # then execute every tool it asked for.
             working_messages.append(message.model_dump())
 
             for tool_call in message.tool_calls:
@@ -102,16 +65,10 @@ def call_chat_model(
                         "content": json.dumps(result),
                     }
                 )
+            continue
 
-            continue  # loop again — model now has the tool results
-
-        # finish_reason is something other than "tool_calls" -> this is
-        # the model's final answer. Parse it per our reply/action
-        # JSON contract.
         return _parse_model_json(message.content or "")
 
-    # Safety valve: should only trigger if something is genuinely wrong
-    # (e.g. a tool description is confusing the model into looping).
     return {
         "reply": "I'm having trouble pulling together an answer right now — could you try rephrasing your question?",
         "action": {"type": None, "payload": {}},
@@ -119,10 +76,7 @@ def call_chat_model(
 
 
 def _parse_model_json(raw_text: str) -> dict:
-    # The model is instructed to return ONLY JSON, but models
-    # occasionally wrap it in a markdown code fence anyway. Strip that
-    # defensively before parsing rather than trusting the instruction
-    # blindly.
+    # Strip markdown code fences the model occasionally wraps around JSON despite instructions.
     cleaned = raw_text.strip()
     if cleaned.startswith("```"):
         cleaned = cleaned.strip("`")
@@ -136,11 +90,7 @@ def _parse_model_json(raw_text: str) -> dict:
             "reply": parsed.get("reply", cleaned),
             "action": parsed.get("action", {"type": None, "payload": {}}),
         }
-    except json.JSONDecodeError as err:
-        # Fallback: if parsing fails, still show the user SOMETHING
-        # instead of a hard error. Deliberate "fail soft" choice — a
-        # slightly malformed but readable reply beats a broken chat.
-        print(f"Failed to parse model JSON, falling back to raw text: {err}")
+    except json.JSONDecodeError:
         return {
             "reply": cleaned,
             "action": {"type": None, "payload": {}},

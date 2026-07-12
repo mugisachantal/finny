@@ -8,38 +8,30 @@ use Illuminate\Validation\ValidationException;
 
 class BorrowerAuthService
 {
-    /**
-     * Returns ['borrower' => Borrower, 'token' => string].
-     *
-     * Throws a ValidationException (not a raw exception) on bad
-     * credentials or a suspended account, so the controller returns a
-     * clean 422 without needing an if/else chain of its own. The error
-     * message deliberately does not distinguish between "phone not
-     * found" and "wrong password", to prevent account enumeration.
-     */
-    public function attempt(string $phoneNumber, string $password): array
-    {
-        $borrower = Borrower::where('phone_number', $phoneNumber)->first();
+    public function __construct(private readonly JwtService $jwt) {}
 
+    public function attempt(string $email, string $password): array
+    {
+        $borrower = Borrower::where('email', $email)->first();
+
+        // Deliberately indistinct error message to prevent account enumeration.
         if (! $borrower || ! Hash::check($password, $borrower->password)) {
             throw ValidationException::withMessages([
-                'phone_number' => ['Invalid phone number or password.'],
+                'email' => ['Invalid email or password.'],
             ]);
         }
 
         if ($borrower->status === 'suspended') {
             throw ValidationException::withMessages([
-                'phone_number' => ['This account has been suspended. Please contact support.'],
+                'email' => ['This account has been suspended. Please contact support.'],
             ]);
         }
 
-        $token = $borrower->createToken('finny-web')->plainTextToken;
-
-        return ['borrower' => $borrower, 'token' => $token];
+        return ['borrower' => $borrower, 'token' => $this->jwt->issue($borrower)];
     }
 
-    public function logout(Borrower $borrower): void
+    public function logout(): void
     {
-        $borrower->currentAccessToken()->delete();
+        // JWT is stateless — invalidation is handled client-side by discarding the token.
     }
 }

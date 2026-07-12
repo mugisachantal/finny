@@ -1,0 +1,11 @@
+vendor/
+node_modules/
+storage/
+.env
+.env.*
+!.env.example
+*.log
+.git/
+.gitignore
+tests/
+README.md

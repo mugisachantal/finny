@@ -9,7 +9,7 @@ export const QuickActions = () => {
 
   const getRecommendation = async () => {
     setLoading(true);
-    const response = await fetch("/api/finny/recommend", {
+    const response = await fetch("/api/v1/recommendations", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -24,8 +24,8 @@ export const QuickActions = () => {
     });
     const data = await response.json();
     setChatAnswer(
-      data.recommendations?.[0]?.name
-        ? `Top match: ${data.recommendations[0].name} — UGX ${data.recommendations[0].totalRepayment}`
+      data.data?.recommendations?.[0]?.name
+        ? `Top match: ${data.data.recommendations[0].name} — UGX ${data.data.recommendations[0].totalRepayment}`
         : "No recommendation available yet.",
     );
     setLoading(false);

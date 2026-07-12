@@ -135,7 +135,6 @@ const LoansTab = () => {
   };
 
   const handleRepayConfirm = () => {
-    console.log(`Marked loan ${selectedLoan?.id} as repaid.`);
     setRepayDialogOpen(false);
     setSelectedLoan(null);
   };

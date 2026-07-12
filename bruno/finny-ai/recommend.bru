@@ -1,0 +1,29 @@
+meta {
+  name: Get Recommendations
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{finny_ai_base}}/api/v1/recommendations
+  body: json
+  auth: bearer
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  "requestedAmount": 200000,
+  "requestedTenure": 30,
+  "urgency": "medium",
+  "borrowerProfile": {
+    "income_band": "low",
+    "education_level": "secondary"
+  }
+}
+
+auth:bearer {
+  token: {{token}}
+}

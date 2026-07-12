@@ -1,0 +1,37 @@
+meta {
+  name: Register
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{laravel_base}}/api/v1/auth/register
+  body: multipart-form
+  auth: none
+}
+
+headers {
+  Accept: application/json
+}
+
+body:multipart-form {
+  full_name: Test User
+  date_of_birth: 1990-05-15
+  email: testuser2@example.com
+  phone_number: +256700000002
+  password: Password123!
+  password_confirmation: Password123!
+  income_bracket: 100k_300k
+  district: Kampala
+  education_level: secondary
+  terms_accepted: true
+  nin_image: @/tmp/test_nin.jpg
+  liveliness_image: @/tmp/test_live.jpg
+}
+
+script:post-response {
+  if (res.status === 201) {
+    bru.setVar("token", res.body.data.token);
+    bru.setVar("user_id", res.body.data.borrower.id);
+  }
+}

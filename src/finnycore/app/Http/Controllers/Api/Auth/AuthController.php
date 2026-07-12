@@ -8,6 +8,7 @@ use App\Http\Requests\Auth\RegisterBorrowerRequest;
 use App\Http\Resources\BorrowerResource;
 use App\Services\Auth\BorrowerAuthService;
 use App\Services\Auth\BorrowerRegistrationService;
+use App\Services\Auth\JwtService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -16,6 +17,7 @@ class AuthController extends Controller
     public function __construct(
         private readonly BorrowerRegistrationService $registration,
         private readonly BorrowerAuthService $auth,
+        private readonly JwtService $jwt,
     ) {}
 
     public function register(RegisterBorrowerRequest $request): JsonResponse
@@ -26,13 +28,11 @@ class AuthController extends Controller
             $request->file('liveliness_image'),
         );
 
-        $token = $borrower->createToken('finny-web')->plainTextToken;
-
         return response()->json([
             'message' => 'Registration successful.',
             'data' => [
                 'borrower' => new BorrowerResource($borrower),
-                'token' => $token,
+                'token'    => $this->jwt->issue($borrower),
             ],
         ], 201);
     }
@@ -40,7 +40,7 @@ class AuthController extends Controller
     public function login(LoginRequest $request): JsonResponse
     {
         $result = $this->auth->attempt(
-            $request->validated('phone_number'),
+            $request->validated('email'),
             $request->validated('password'),
         );
 
@@ -48,17 +48,15 @@ class AuthController extends Controller
             'message' => 'Login successful.',
             'data' => [
                 'borrower' => new BorrowerResource($result['borrower']),
-                'token' => $result['token'],
+                'token'    => $result['token'],
             ],
         ]);
     }
 
-    public function logout(Request $request): JsonResponse
+    public function logout(): JsonResponse
     {
-        $this->auth->logout($request->user());
+        $this->auth->logout();
 
-        return response()->json([
-            'message' => 'Logged out successfully.',
-        ]);
+        return response()->json(['message' => 'Logged out successfully.']);
     }
 }
