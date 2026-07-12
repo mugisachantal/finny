@@ -1,0 +1,201 @@
+- main [ref=f1e3]:
+  - generic [ref=f1e5]:
+    - generic [ref=f1e6]: Protecting you from unsolicited loans
+    - generic [ref=f1e7]: +256 200 911 882 | Kampala, Uganda
+  - generic [ref=f1e9]:
+    - generic [ref=f1e10]:
+      - link [ref=f1e11] [cursor=pointer]:
+        - /url: /
+        - heading "finny" [level=1] [ref=f1e13]
+      - navigation [ref=f1e14]:
+        - link "Home" [ref=f1e15] [cursor=pointer]:
+          - /url: "#hero"
+        - link "How it Works" [ref=f1e16] [cursor=pointer]:
+          - /url: "#works"
+        - link "Features" [ref=f1e17] [cursor=pointer]:
+          - /url: "#features"
+        - link "FAQ" [ref=f1e18] [cursor=pointer]:
+          - /url: "#faq"
+        - link "Contact" [ref=f1e19] [cursor=pointer]:
+          - /url: "#contact"
+    - link "Get Started" [ref=f1e21] [cursor=pointer]:
+      - /url: /signup
+  - generic [ref=f1e23]:
+    - generic [ref=f1e24]:
+      - generic [ref=f1e25]: AI-Powered Protection
+      - heading "Tired of loan offers you never asked for?" [level=1] [ref=f1e26]: Tired of loan offers younever asked for?
+      - paragraph [ref=f1e27]: Finny puts you back in control. Choose which lenders can reach you, check if you can truly afford any offer, and get early warnings before debt becomes a problem.
+      - generic [ref=f1e28]:
+        - link "Get Started Free" [ref=f1e29] [cursor=pointer]:
+          - /url: /signup
+        - link "See How It Works" [ref=f1e30] [cursor=pointer]:
+          - /url: "#works"
+      - generic [ref=f1e31]:
+        - generic [ref=f1e32]: Trusted by 50,000+ Ugandans
+        - generic [ref=f1e34]: 100% free to use
+        - generic [ref=f1e36]: Your data stays private
+    - img "hero" [ref=f1e39]
+  - generic [ref=f1e41]:
+    - generic [ref=f1e42]:
+      - paragraph [ref=f1e43]: Features
+      - heading "Everything you need to borrow safely" [level=2] [ref=f1e44]
+    - generic [ref=f1e45]:
+      - article [ref=f1e46]:
+        - heading "Consent Control" [level=3] [ref=f1e51]
+        - paragraph [ref=f1e52]: Choose which lenders can reach you with offers. Block unsolicited messages instantly and take back control of your inbox.
+        - link "Learn more" [ref=f1e53] [cursor=pointer]:
+          - /url: "#works"
+      - article [ref=f1e54]:
+        - heading "Affordability Check" [level=3] [ref=f1e58]
+        - paragraph [ref=f1e59]: Our AI evaluates whether a loan fits your real financial situation — keeping your personal data fully private throughout the process.
+        - link "Learn more" [ref=f1e60] [cursor=pointer]:
+          - /url: "#works"
+      - article [ref=f1e61]:
+        - heading "Transparent Pricing" [level=3] [ref=f1e65]
+        - paragraph [ref=f1e66]: See the full picture — total cost, interest, fees, and repayment schedule — before you accept any loan offer. No hidden surprises.
+        - link "Learn more" [ref=f1e67] [cursor=pointer]:
+          - /url: "#works"
+      - article [ref=f1e68]:
+        - heading "Early Warning Alerts" [level=3] [ref=f1e73]
+        - paragraph [ref=f1e74]: We monitor signs of over-indebtedness across your borrowing activity and alert you early — before small debts become serious problems.
+        - link "Learn more" [ref=f1e75] [cursor=pointer]:
+          - /url: "#works"
+  - generic [ref=f1e77]:
+    - generic [ref=f1e78]:
+      - paragraph [ref=f1e79]: Why Finny
+      - heading "Digital lending in Uganda is broken. Finny fixes it." [level=2] [ref=f1e80]: Digital lending in Uganda is broken.Finny fixes it.
+    - generic [ref=f1e81]:
+      - generic [ref=f1e82]:
+        - paragraph [ref=f1e85]: Unsolicited loan offers flooding your phone daily
+        - paragraph [ref=f1e88]: You choose exactly who can contact you — block the rest
+      - generic [ref=f1e89]:
+        - paragraph [ref=f1e92]: Hidden fees and unclear repayment terms
+        - paragraph [ref=f1e95]: Full cost breakdown displayed before you accept any offer
+      - generic [ref=f1e96]:
+        - paragraph [ref=f1e99]: Borrowing more than you can realistically repay
+        - paragraph [ref=f1e102]: AI-powered affordability checks based on your actual finances
+      - generic [ref=f1e103]:
+        - paragraph [ref=f1e106]: No warning signs until debt becomes overwhelming
+        - paragraph [ref=f1e109]: Real-time alerts that catch problems before they spiral
+      - generic [ref=f1e110]:
+        - paragraph [ref=f1e113]: Personal data shared with lenders without your knowledge
+        - paragraph [ref=f1e116]: Bank-level encryption — your data is never shared without consent
+  - generic [ref=f1e118]:
+    - generic [ref=f1e119]:
+      - paragraph [ref=f1e120]: 4.8★
+      - paragraph [ref=f1e121]: User rating on the Play Store
+    - generic [ref=f1e122]:
+      - paragraph [ref=f1e123]: 50K+
+      - paragraph [ref=f1e124]: Users protected across Uganda
+    - generic [ref=f1e125]:
+      - paragraph [ref=f1e126]: 100+
+      - paragraph [ref=f1e127]: Partner lenders connected
+    - generic [ref=f1e128]:
+      - paragraph [ref=f1e129]: 100%
+      - paragraph [ref=f1e130]: Free to use, always
+  - generic [ref=f1e132]:
+    - generic [ref=f1e133]:
+      - paragraph [ref=f1e134]: How it works
+      - heading "Safer loans start with better visibility" [level=2] [ref=f1e135]
+      - paragraph [ref=f1e136]: Get set up in under 2 minutes — no paperwork, no waiting.
+    - generic [ref=f1e137]:
+      - generic [ref=f1e138]:
+        - generic [ref=f1e139]: "01"
+        - heading "Set your consent" [level=3] [ref=f1e140]
+        - paragraph [ref=f1e141]: Tell Finny which lenders can reach you. Block the rest instantly — takes less than 30 seconds.
+      - generic [ref=f1e142]:
+        - generic [ref=f1e143]: "02"
+        - heading "Check affordability" [level=3] [ref=f1e144]
+        - paragraph [ref=f1e145]: Our AI reviews any loan offer against your real financial situation before you accept, keeping your data private.
+      - generic [ref=f1e146]:
+        - generic [ref=f1e147]: "03"
+        - heading "Stay protected" [level=3] [ref=f1e148]
+        - paragraph [ref=f1e149]: Get early warnings about over-indebtedness and transparent pricing breakdowns on every offer you receive.
+    - link "Ready to get started?" [ref=f1e151] [cursor=pointer]:
+      - /url: /signup
+  - generic [ref=f1e155]:
+    - generic [ref=f1e156]:
+      - paragraph [ref=f1e157]: Resources
+      - heading "Practical guidance for smarter borrowing" [level=2] [ref=f1e158]
+      - paragraph [ref=f1e159]: Everything you need to navigate digital lending with confidence.
+      - list [ref=f1e160]:
+        - listitem [ref=f1e161]: How to evaluate loan offers before accepting
+        - listitem [ref=f1e163]: Understanding your rights as a borrower in Uganda
+        - listitem [ref=f1e165]: Tips to avoid common debt traps
+      - link "Explore resources" [ref=f1e167] [cursor=pointer]:
+        - /url: "#"
+    - generic [ref=f1e168]:
+      - paragraph [ref=f1e169]: Contact
+      - heading "Get in touch with Finny" [level=2] [ref=f1e170]
+      - paragraph [ref=f1e171]: Questions, feedback, or partnership inquiries — we'd love to hear from you.
+      - generic [ref=f1e172]:
+        - paragraph [ref=f1e173]: +256 200 911 882
+        - paragraph [ref=f1e174]: hello@finny.ug
+        - paragraph [ref=f1e175]: Kampala, Uganda
+  - generic [ref=f1e177]:
+    - heading "Start protecting your finances today" [level=2] [ref=f1e178]
+    - paragraph [ref=f1e179]: Join thousands of Ugandans who use Finny to take control of their borrowing. Free to use, always.
+    - link "Get Started Free" [ref=f1e180] [cursor=pointer]:
+      - /url: /signup
+  - generic [ref=f1e182]:
+    - generic [ref=f1e183]:
+      - paragraph [ref=f1e184]: FAQ
+      - heading "Frequently asked questions" [level=2] [ref=f1e185]
+    - generic [ref=f1e186]:
+      - button "What is Finny?" [ref=f1e188]
+      - button "Is Finny free to use?" [ref=f1e193]
+      - button "How does consent control work?" [ref=f1e198]
+      - button "Does Finny share my data with lenders?" [ref=f1e203]
+      - button "How does the affordability check work?" [ref=f1e208]
+      - button "Which lenders does Finny work with?" [ref=f1e213]
+      - button "What if I'm already in debt?" [ref=f1e218]
+      - button "How do I get started?" [ref=f1e223]
+  - generic [ref=f1e228]:
+    - generic [ref=f1e229]:
+      - generic [ref=f1e230]:
+        - link "FINNY" [ref=f1e231] [cursor=pointer]:
+          - /url: /
+        - paragraph [ref=f1e235]: Your AI-powered shield against high-cost digital loans.
+      - generic [ref=f1e236]:
+        - heading "Product" [level=4] [ref=f1e237]
+        - list [ref=f1e238]:
+          - listitem [ref=f1e239]:
+            - link "Features" [ref=f1e240] [cursor=pointer]:
+              - /url: "#features"
+          - listitem [ref=f1e241]:
+            - link "How it Works" [ref=f1e242] [cursor=pointer]:
+              - /url: "#works"
+          - listitem [ref=f1e243]:
+            - link "Pricing" [ref=f1e244] [cursor=pointer]:
+              - /url: "#faq"
+      - generic [ref=f1e245]:
+        - heading "Resources" [level=4] [ref=f1e246]
+        - list [ref=f1e247]:
+          - listitem [ref=f1e248]:
+            - link "Guides" [ref=f1e249] [cursor=pointer]:
+              - /url: "#resources"
+          - listitem [ref=f1e250]:
+            - link "Blog" [ref=f1e251] [cursor=pointer]:
+              - /url: "#"
+          - listitem [ref=f1e252]:
+            - link "FAQ" [ref=f1e253] [cursor=pointer]:
+              - /url: "#faq"
+      - generic [ref=f1e254]:
+        - heading "Company" [level=4] [ref=f1e255]
+        - list [ref=f1e256]:
+          - listitem [ref=f1e257]:
+            - link "Contact" [ref=f1e258] [cursor=pointer]:
+              - /url: "#contact"
+          - listitem [ref=f1e259]:
+            - link "Privacy Policy" [ref=f1e260] [cursor=pointer]:
+              - /url: "#"
+          - listitem [ref=f1e261]:
+            - link "Terms of Service" [ref=f1e262] [cursor=pointer]:
+              - /url: "#"
+    - generic [ref=f1e263]:
+      - generic [ref=f1e264]: © 2026 Finny. All rights reserved.
+      - generic [ref=f1e265]:
+        - link "Privacy" [ref=f1e266] [cursor=pointer]:
+          - /url: "#"
+        - link "Terms" [ref=f1e267] [cursor=pointer]:
+          - /url: "#"

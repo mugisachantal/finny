@@ -1,0 +1,134 @@
+- main [ref=f2e3]:
+  - generic [ref=f2e5]:
+    - generic [ref=f2e6]:
+      - link [ref=f2e7] [cursor=pointer]:
+        - /url: /
+        - heading "finny" [level=1] [ref=f2e9]
+      - navigation [ref=f2e10]:
+        - link "Providers" [ref=f2e11] [cursor=pointer]:
+          - /url: "#"
+        - link "Loan History" [ref=f2e12] [cursor=pointer]:
+          - /url: "#"
+        - link "Providers" [ref=f2e13] [cursor=pointer]:
+          - /url: "#"
+    - generic [ref=f2e15]:
+      - button [ref=f2e16]
+      - button "Jerome" [expanded] [ref=f2e20] [cursor=pointer]
+      - menu "Jerome" [active] [ref=f2e199]:
+        - menuitem "Profile" [ref=f2e200]
+        - menuitem "Settings" [ref=f2e201]
+        - separator [ref=f2e202]
+        - menuitem "Logout" [ref=f2e203]
+  - generic [ref=f2e29]:
+    - generic [ref=f2e30]:
+      - heading "Welcome Back, Jerome !" [level=1] [ref=f2e32]
+      - generic [ref=f2e34]:
+        - generic [ref=f2e35]:
+          - generic [ref=f2e36]: Amount (UGX)
+          - textbox [ref=f2e37]: "200000"
+        - button "Find Loans" [ref=f2e38] [cursor=pointer]
+      - generic [ref=f2e39]:
+        - heading "Quick Loan" [level=2] [ref=f2e44]
+        - heading "Quick Loan" [level=2] [ref=f2e54]
+        - heading "Quick Loan" [level=2] [ref=f2e59]
+    - generic [ref=f2e60]:
+      - generic [ref=f2e61]:
+        - heading "Recents" [level=2] [ref=f2e62]
+        - link "Full History" [ref=f2e63] [cursor=pointer]:
+          - /url: "#"
+      - generic [ref=f2e68]:
+        - paragraph [ref=f2e69]: Quick Sent loan successful
+        - paragraph [ref=f2e70]: ×
+  - generic [ref=f2e72]:
+    - generic [ref=f2e73]:
+      - heading "Top Providers" [level=2] [ref=f2e74]
+      - link "View All" [ref=f2e75] [cursor=pointer]:
+        - /url: "#"
+    - generic [ref=f2e79]:
+      - generic [ref=f2e80] [cursor=pointer]:
+        - generic [ref=f2e81]: 18% interest
+        - img "Kasente" [ref=f2e88]
+        - paragraph [ref=f2e89]: Kasente
+        - paragraph [ref=f2e90]: Mobile money loans for SMEs
+        - button "Get Loan" [ref=f2e92]
+      - generic [ref=f2e93] [cursor=pointer]:
+        - generic [ref=f2e94]: 24% interest
+        - img "Quick Sente" [ref=f2e101]
+        - paragraph [ref=f2e102]: Quick Sente
+        - paragraph [ref=f2e103]: Instant micro-loans via app
+        - button "Get Loan" [ref=f2e105]
+      - generic [ref=f2e106] [cursor=pointer]:
+        - generic [ref=f2e107]: 15% interest
+        - img "Fido" [ref=f2e114]
+        - paragraph [ref=f2e115]: Fido
+        - paragraph [ref=f2e116]: Digital lending platform
+        - button "Get Loan" [ref=f2e118]
+      - generic [ref=f2e119] [cursor=pointer]:
+        - generic [ref=f2e120]: 21% interest
+        - img "Numida" [ref=f2e127]
+        - paragraph [ref=f2e128]: Numida
+        - paragraph [ref=f2e129]: Business credit solutions
+        - button "Get Loan" [ref=f2e131]
+  - generic [ref=f2e133]:
+    - generic [ref=f2e134]: Help
+    - generic [ref=f2e139]:
+      - generic [ref=f2e140]: Ask Finny AI
+      - button [ref=f2e141]
+  - generic [ref=f2e147]:
+    - generic [ref=f2e148]:
+      - generic [ref=f2e149]:
+        - link "FINNY" [ref=f2e150] [cursor=pointer]:
+          - /url: /
+        - paragraph [ref=f2e154]: Finny helps you stay protected from unsolicited loans with consent control, affordability checks, and early warning alerts.
+        - generic [ref=f2e155]:
+          - paragraph [ref=f2e156]: Contact
+          - paragraph [ref=f2e157]: Kampala, Uganda
+          - paragraph [ref=f2e158]: +256 200 911 882
+          - paragraph [ref=f2e159]: support@finny.ug
+      - generic [ref=f2e160]:
+        - generic [ref=f2e161]:
+          - heading "Product" [level=2] [ref=f2e162]
+          - list [ref=f2e163]:
+            - listitem [ref=f2e164]:
+              - link "How it works" [ref=f2e165] [cursor=pointer]:
+                - /url: "#works"
+            - listitem [ref=f2e166]:
+              - link "Features" [ref=f2e167] [cursor=pointer]:
+                - /url: "#features"
+            - listitem [ref=f2e168]:
+              - link "Resources" [ref=f2e169] [cursor=pointer]:
+                - /url: "#resources"
+        - generic [ref=f2e170]:
+          - heading "Company" [level=2] [ref=f2e171]
+          - list [ref=f2e172]:
+            - listitem [ref=f2e173]:
+              - link "About Finny" [ref=f2e174] [cursor=pointer]:
+                - /url: "#hero"
+            - listitem [ref=f2e175]:
+              - link "Lender Onboarding" [ref=f2e176] [cursor=pointer]:
+                - /url: /lender-onboarding
+            - listitem [ref=f2e177]:
+              - link "Contact" [ref=f2e178] [cursor=pointer]:
+                - /url: "#contact"
+            - listitem [ref=f2e179]:
+              - link "Support" [ref=f2e180] [cursor=pointer]:
+                - /url: mailto:support@finny.ug
+        - generic [ref=f2e181]:
+          - heading "Legal" [level=2] [ref=f2e182]
+          - list [ref=f2e183]:
+            - listitem [ref=f2e184]:
+              - link "Terms & Conditions" [ref=f2e185] [cursor=pointer]:
+                - /url: "#"
+            - listitem [ref=f2e186]:
+              - link "Privacy Policy" [ref=f2e187] [cursor=pointer]:
+                - /url: "#"
+            - listitem [ref=f2e188]:
+              - link "Cookie Policy" [ref=f2e189] [cursor=pointer]:
+                - /url: "#"
+    - generic [ref=f2e190]:
+      - paragraph [ref=f2e191]: © 2026 Finny. All rights reserved.
+      - generic [ref=f2e192]:
+        - link "Back to top" [ref=f2e193] [cursor=pointer]:
+          - /url: "#hero"
+        - link "Support" [ref=f2e194] [cursor=pointer]:
+          - /url: mailto:support@finny.ug

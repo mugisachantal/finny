@@ -1,18 +1,312 @@
-# Finny Intelligence Layer
+# Finny - Financial Companion Chatbot
 
-## Endpoints
+Finny is an AI-powered financial companion designed for Ugandan borrowers. It helps low-income and first-time borrowers navigate digital lending by providing loan comparisons, financial rights education, self-protection guidance, and fraud response support.
 
-- POST /recommend
-  - Input: requestedAmount, requestedTenure, urgency, borrowerProfile, lenderList
-  - Output: ranked recommendations with total repayment, score, and reason
-  - Assumption: the Laravel-owned lender table is expected to expose fields such as min_amount, max_amount, min_tenure_days, max_tenure_days, licensed_by_umra, upheld_complaints, and status; this service normalizes several common spellings for compatibility.
+## Tech Stack
 
-- POST /chat
-  - Input: message, sessionId, userProfile, currentApplication
-  - Output: plain-language answer plus the scoped context used for the turn
-  - Assumption: the Laravel-owned user/application tables expose profile fields and current application fields in the expected shape; the service only sends the scoped subset to the model or fallback.
+| Component | Technology | Versions |
+|-----------|------------|----------|
+| **Frontend** | React + TypeScript + Vite + Tailwind CSS | 19.2, 6.0, 8.1, 4.3 |
+| **UI Library** | shadcn/ui (base-luma style) | - |
+| **AI Backend** | Python FastAPI + Flask + Groq API | FastAPI 0.110+, Flask 3.0+, Groq 0.11+ |
+| **Core Backend** | Laravel + PHP | 13.0, 8.3+ |
+| **Authentication** | Laravel Sanctum | 4.3 |
+| **Database** | SQLite (default) | Configurable |
+| **AI Model** | Groq-hosted LLM | llama-3.3-70b-versatile |
 
-- POST /ussd/webhook
-  - Input: phoneNumber, text, sessionId
-  - Output: a USSD-style response that reuses the same /recommend scoring path
-  - Note: this endpoint does not duplicate scoring logic; it calls the recommendation handler directly.
+## Project Structure
+
+```
+finny/
+├── frontend/                    # React 19 + TypeScript + Vite + Tailwind CSS v4
+│   ├── src/
+│   │   ├── main.tsx            # React root mount
+│   │   ├── App.tsx             # Router with all routes
+│   │   ├── pages/              # Page components (Landing, Home, Login, etc.)
+│   │   ├── components/         # UI components including FloatingChatbot
+│   │   └── lib/                # Utilities
+│   └── package.json            # Node.js dependencies
+│
+├── finny-ai/                    # Python AI chatbot backend
+│   └── app/
+│       ├── main.py             # FastAPI server (port 8000)
+│       ├── server.py           # Flask server (port 3001) - dev/test
+│       ├── groq_client.py      # Groq API client with tool-call loop
+│       ├── tools.py            # Tool definitions for model function-calling
+│       ├── system_prompt.py    # System prompt builder
+│       ├── knowledge_base.py   # Uganda-specific financial knowledge
+│       ├── module_connectors.py # Integration bridge to recommendation engine
+│       └── recommendation.py   # Lender scoring/ranking algorithm
+│
+├── src/finnycore/               # Laravel 13 / PHP 8.3 backend
+│   ├── app/
+│   │   ├── Http/Controllers/   # API controllers (Auth, Profile, Finny)
+│   │   ├── Models/             # User, Borrower models
+│   │   └── services/           # Business logic services
+│   ├── routes/                 # API routes
+│   ├── database/               # Migrations, seeders
+│   └── composer.json           # PHP dependencies
+│
+├── requirements.txt            # Python dependencies
+└── .env                        # Environment variables (GROQ_API_KEY)
+```
+
+## Prerequisites
+
+Before running the project, ensure you have:
+
+- **Node.js** 18+ and npm
+- **Python** 3.10+
+- **PHP** 8.3+
+- **Composer** (PHP package manager)
+- **Groq API key** (free at https://console.groq.com)
+
+## Getting Started
+
+### 1. Clone the Repository
+
+```bash
+git clone <repository-url>
+cd finny
+```
+
+### 2. Environment Setup
+
+Create a `.env` file in the root directory:
+
+```bash
+# Required: Get your API key from https://console.groq.com
+GROQ_API_KEY=your_groq_api_key_here
+
+# Optional (defaults shown)
+GROQ_MODEL=llama-3.3-70b-versatile
+MAX_HISTORY_TURNS=6
+RECOMMENDATION_SERVICE_URL=http://127.0.0.1:8001/recommend
+```
+
+### 3. Frontend Setup
+
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+The frontend will be available at **http://localhost:5173**
+
+**Note:** The Vite dev server proxies `/chat` requests to the AI backend on port 8000.
+
+### 4. AI Backend Setup
+
+```bash
+# Install Python dependencies
+pip install -r requirements.txt
+
+# Start the FastAPI server (primary)
+cd finny-ai
+python -m uvicorn app.main:app --reload
+
+# OR start the Flask server (development/testing)
+python -m app.server
+```
+
+- **FastAPI server**: http://localhost:8000
+- **Flask server**: http://localhost:3001
+
+### 5. Laravel Backend Setup
+
+```bash
+cd src/finnycore
+
+# Install dependencies and setup
+composer setup
+
+# Start development server
+composer dev
+```
+
+The Laravel backend will be available at **http://localhost:8000**
+
+**Important:** If running both Laravel and FastAPI servers, they'll conflict on port 8000. Configure Laravel to use a different port:
+
+```bash
+php artisan serve --port=8001
+```
+
+## Environment Variables
+
+### Root `.env` (AI Backend)
+
+| Variable | Required | Default | Description |
+|----------|----------|---------|-------------|
+| `GROQ_API_KEY` | Yes | - | API key for Groq LLM service |
+| `GROQ_MODEL` | No | `llama-3.3-70b-versatile` | Groq model to use |
+| `MAX_HISTORY_TURNS` | No | `6` | Conversation turns to send |
+| `RECOMMENDATION_SERVICE_URL` | No | `http://127.0.0.1:8001/recommend` | Recommendation engine URL |
+
+### Laravel Backend (`.env` in `src/finnycore/`)
+
+Run `composer setup` to auto-generate the `.env` file from `.env.example`.
+
+Key variables:
+- `APP_KEY` - Auto-generated by `composer setup`
+- `DB_CONNECTION` - Default: `sqlite`
+- `SANCTUM_STATEFUL_DOMAINS` - Configure for production
+
+## Architecture
+
+### Data Flow
+
+```
+┌─────────────┐     ┌──────────────┐     ┌─────────────┐
+│   Frontend  │────▶│  AI Backend  │────▶│  Groq API   │
+│  (React)    │     │  (FastAPI)   │     │  (LLM)      │
+│  Port 5173  │     │  Port 8000   │     └─────────────┘
+└─────────────┘     └──────┬───────┘
+                           │
+                           ▼
+                    ┌──────────────┐
+                    │ Recommendation│
+                    │   Engine     │
+                    └──────────────┘
+```
+
+### Integration Points
+
+1. **Frontend ↔ AI Backend**: Vite dev proxy forwards `/chat` to FastAPI on port 8000
+2. **AI Backend ↔ Groq API**: Tool-calling loop for lender info, user applications, recommendations
+3. **AI Backend ↔ Recommendation Engine**: `module_connectors.py` bridges tool calls
+4. **Laravel Backend ↔ AI Backend**: `FinnyController` proxies `/api/finny/chat` and `/api/finny/recommend`
+
+### Port Mapping
+
+| Service | Port | URL |
+|---------|------|-----|
+| Frontend (Vite) | 5173 | http://localhost:5173 |
+| AI Backend (FastAPI) | 8000 | http://localhost:8000 |
+| AI Backend (Flask) | 3001 | http://localhost:3001 |
+| Laravel Backend | 8000 | http://localhost:8000 |
+
+## Development Commands
+
+### Frontend (`frontend/`)
+
+```bash
+npm run dev       # Start Vite dev server
+npm run build     # Type check + production build
+npm run lint      # Run ESLint
+npm run preview   # Preview production build
+```
+
+### AI Backend (`finny-ai/`)
+
+```bash
+# FastAPI server (recommended for development)
+python -m uvicorn app.main:app --reload
+
+# Flask server (for testing with static UI)
+python -m app.server
+```
+
+### Laravel Backend (`src/finnycore/`)
+
+```bash
+composer setup   # Install + .env + key:generate + migrate + npm build
+composer dev     # Run artisan serve, queue, pail, vite concurrently
+composer test    # Clear config then run phpunit
+php artisan migrate  # Run database migrations
+```
+
+## API Endpoints
+
+### AI Backend (FastAPI - Port 8000)
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/health` | Health check |
+| POST | `/chat` | Main chat endpoint |
+| POST | `/recommend` | Loan recommendation scoring |
+| POST | `/ussd/webhook` | USSD integration webhook |
+
+### AI Backend (Flask - Port 3001)
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/` | Static test UI |
+| GET | `/api/health` | Health check |
+| GET | `/api/mock-profiles` | Mock user profiles |
+| POST | `/chat` | Chat endpoint |
+
+### Laravel Backend (Port 8000)
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| POST | `/api/v1/auth/register` | Borrower registration |
+| POST | `/api/v1/auth/login` | Borrower login |
+| POST | `/api/v1/auth/logout` | Logout (auth required) |
+| GET | `/api/v1/auth/profile` | Get profile (auth required) |
+| PUT | `/api/v1/auth/profile` | Update profile (auth required) |
+| POST | `/api/finny/recommend` | Proxy to AI recommendation engine |
+| POST | `/api/finny/chat` | Proxy to AI chat endpoint |
+
+## Known Issues
+
+1. **No auth integration in FloatingChatbot** - The frontend sends no auth header and empty `userProfile: {}`. The `get_user_applications` tool always returns empty.
+
+2. **Lender data is hardcoded mock** - Both `module_connectors.py` and the USSD webhook use static lender lists. Real data from Laravel is not wired yet.
+
+3. **Working directory matters** - `finny-ai/main.py` uses `from app.module_connectors import ...`, so the working directory must be `finny-ai/` or it must be on `PYTHONPATH`.
+
+4. **Flask static path is hardcoded** - `server.py` serves test UI from `../static` relative to `finny-ai/`.
+
+5. **Large JS bundle** - `npm run build` produces a 1.8MB JS chunk; needs code splitting before production.
+
+6. **Different auth conventions** - `main.py` reads userId from `Authorization: Bearer <userId>` header; `server.py` reads from `userProfile.userId` in the body.
+
+## Troubleshooting
+
+### Port Conflicts
+
+If port 8000 is already in use:
+
+```bash
+# Find and kill the process
+lsof -ti:8000 | xargs kill -9
+
+# Or use a different port for Laravel
+php artisan serve --port=8001
+```
+
+### Python Import Errors
+
+Ensure you're in the `finny-ai/` directory or set PYTHONPATH:
+
+```bash
+cd finny-ai
+export PYTHONPATH=$PWD
+python -m uvicorn app.main:app --reload
+```
+
+### Groq API Errors
+
+- Verify your `GROQ_API_KEY` is valid in `.env`
+- Check https://console.groq.com for API usage limits
+- Ensure the model name matches Groq's supported models
+
+### Database Issues (Laravel)
+
+```bash
+cd src/finnycore
+php artisan migrate:fresh --seed  # Reset and reseed database
+```
+
+## Contributing
+
+1. Follow existing code style and conventions
+2. Test changes across all components when modifying integration points
+3. Update documentation for new features or configuration changes
+4. Run linters before committing (`npm run lint` for frontend, `composer test` for Laravel)
+
+## License
+
+[Add your license here]

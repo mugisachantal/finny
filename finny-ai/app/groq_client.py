@@ -46,7 +46,9 @@ def _get_client():
     return _client
 
 
-def call_chat_model(system_prompt: str, messages: list[dict], context: dict | None = None) -> dict:
+def call_chat_model(
+    system_prompt: str, messages: list[dict], context: dict | None = None
+) -> dict:
     """
     :param system_prompt: full system prompt from system_prompt.py
     :param messages: list of {"role": "user"|"assistant", "content": str}
@@ -92,12 +94,14 @@ def call_chat_model(system_prompt: str, messages: list[dict], context: dict | No
 
                 result = execute_tool(tool_call.function.name, args, context)
 
-                working_messages.append({
-                    "role": "tool",
-                    "tool_call_id": tool_call.id,
-                    "name": tool_call.function.name,
-                    "content": json.dumps(result),
-                })
+                working_messages.append(
+                    {
+                        "role": "tool",
+                        "tool_call_id": tool_call.id,
+                        "name": tool_call.function.name,
+                        "content": json.dumps(result),
+                    }
+                )
 
             continue  # loop again — model now has the tool results
 

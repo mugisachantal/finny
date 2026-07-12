@@ -1,7 +1,10 @@
 from __future__ import annotations
 
+import copy
 import os
+from datetime import datetime, timezone
 from typing import Any, Dict, List, Optional
+from uuid import uuid4
 
 from dotenv import load_dotenv
 from fastapi import Body, FastAPI, HTTPException, Request
@@ -31,6 +34,7 @@ def _scope_context(user_profile: Dict[str, Any], current_application: Optional[D
 
     return scoped
 
+
 load_dotenv()
 
 app = FastAPI(title="Finny Intelligence Layer")
@@ -42,12 +46,16 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# In-memory conversation store: conv_id -> {title, history, created_at, last_message, message_count}
+_conversations: Dict[str, Dict[str, Any]] = {}
+
 
 class ChatRequest(BaseModel):
     message: str
     conversationHistory: List[Dict[str, Any]] = Field(default_factory=list)
     userProfile: Dict[str, Any] = Field(default_factory=dict)
     userId: Optional[str] = None
+    conversationId: Optional[str] = None
 
 
 class RecommendRequest(BaseModel):
@@ -61,6 +69,34 @@ class RecommendRequest(BaseModel):
 @app.get("/health")
 def health() -> Dict[str, Any]:
     return {"status": "ok"}
+
+
+@app.get("/conversations")
+def list_conversations() -> List[Dict[str, Any]]:
+    convs = [
+        {
+            "id": conv_id,
+            "title": data["title"],
+            "lastMessage": data["last_message"],
+            "createdAt": data["created_at"],
+            "messageCount": data["message_count"],
+        }
+        for conv_id, data in _conversations.items()
+    ]
+    return sorted(convs, key=lambda x: x["createdAt"], reverse=True)
+
+
+@app.get("/conversations/{conversation_id}")
+def get_conversation(conversation_id: str) -> Dict[str, Any]:
+    conv = _conversations.get(conversation_id)
+    if not conv:
+        raise HTTPException(status_code=404, detail="Conversation not found")
+    return {
+        "id": conversation_id,
+        "title": conv["title"],
+        "history": conv["history"],
+        "createdAt": conv["created_at"],
+    }
 
 
 @app.post("/recommend")
@@ -110,19 +146,51 @@ def recommend(payload: RecommendRequest) -> Dict[str, Any]:
 
 @app.post("/chat")
 def chat(payload: ChatRequest, request: Request) -> Dict[str, Any]:
-    user_id = None
-    auth_header = request.headers.get("authorization")
-    if auth_header and auth_header.lower().startswith("bearer "):
-        user_id = auth_header.split(" ", 1)[1]
+    # Resolve user_id: body userProfile.userId first, then Authorization header
+    user_id: Optional[str] = None
+    if payload.userProfile.get("userId"):
+        user_id = str(payload.userProfile["userId"])
+    else:
+        auth_header = request.headers.get("authorization")
+        if auth_header and auth_header.lower().startswith("bearer "):
+            user_id = auth_header.split(" ", 1)[1]
 
-    trimmed_history = payload.conversationHistory[-int(os.getenv("MAX_HISTORY_TURNS", "6")) :]
+    # Resolve conversation
+    conv_id = payload.conversationId
+    if conv_id and conv_id in _conversations:
+        history = copy.deepcopy(_conversations[conv_id]["history"])
+    else:
+        conv_id = str(uuid4())
+        history = payload.conversationHistory  # backwards-compat for clients without conversationId
+        _conversations[conv_id] = {
+            "title": payload.message[:60],
+            "history": [],
+            "created_at": datetime.now(timezone.utc).isoformat(),
+            "last_message": payload.message[:100],
+            "message_count": 0,
+        }
+
+    max_turns = int(os.getenv("MAX_HISTORY_TURNS", "6"))
+    trimmed_history = history[-max_turns:]
     messages = [*trimmed_history, {"role": "user", "content": payload.message}]
     system_prompt = build_system_prompt(payload.userProfile)
     result = call_chat_model(system_prompt, messages, context={"userId": user_id})
 
+    # Persist updated history
+    reply_text = result.get("reply", "")
+    new_history = [
+        *history,
+        {"role": "user", "content": payload.message},
+        {"role": "assistant", "content": reply_text},
+    ]
+    _conversations[conv_id]["history"] = new_history
+    _conversations[conv_id]["last_message"] = reply_text[:100]
+    _conversations[conv_id]["message_count"] = len(new_history) // 2
+
     scoped_context = _scope_context(payload.userProfile, None)
     return {
         **result,
+        "conversationId": conv_id,
         "fallback": result.get("reply") == "I can help explain loan costs, complaints, and fraud warnings in plain language. Ask about affordability, rights, or safety.",
         "scopedContext": scoped_context,
     }
