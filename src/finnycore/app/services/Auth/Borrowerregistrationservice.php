@@ -41,8 +41,8 @@ class BorrowerRegistrationService
         $borrower->forceFill([
             'password' => Hash::make($data['password']),
             'nin_image_path' => $ninPath,
-            'liveliness_check_path' => $livelinessPath,
-            'liveliness_verified' => false,
+           // 'liveliness_check_path' => $livelinessPath,
+            //'liveliness_verified' => false,
             'terms_accepted_at' => now(),
             'status' => 'active',
         ])->save();
