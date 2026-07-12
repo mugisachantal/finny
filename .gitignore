@@ -26,5 +26,4 @@ lerna-debug.log*
 *.sln
 *.sw?
 *.vite
-tests
-*tests
+*.playwright-mcp
