@@ -1,4 +1,6 @@
 import { BrowserRouter, Route, Routes } from "react-router";
+import { AuthProvider } from "./context/AuthContext";
+import { ProtectedRoute } from "./components/ProtectedRoute";
 import Home from "./pages/Home";
 import LenderOnboarding from "./pages/LenderOnboarding";
 import LendersDashboard from "./pages/lenders/LendersDashboard";
@@ -9,18 +11,48 @@ import Landing from "./pages/Landing";
 
 function App() {
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/login" element={<Login />} />
-        <Route path="/signup" element={<Signup />} />
-        <Route path="/register" element={<Signup />} />
-        <Route path="/onboarding" element={<UserOnboarding />} />
-        <Route path="/lender-onboarding" element={<LenderOnboarding />} />
-        <Route path="/" element={<Landing />} />
-        <Route path="/home" element={<Home />} />
-        <Route path="/lenders/dashboard" element={<LendersDashboard />} />
-      </Routes>
-    </BrowserRouter>
+    <AuthProvider>
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<Landing />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<Signup />} />
+          <Route path="/register" element={<Signup />} />
+          <Route
+            path="/onboarding"
+            element={
+              <ProtectedRoute>
+                <UserOnboarding />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/lender-onboarding"
+            element={
+              <ProtectedRoute>
+                <LenderOnboarding />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/home"
+            element={
+              <ProtectedRoute>
+                <Home />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/lenders/dashboard"
+            element={
+              <ProtectedRoute>
+                <LendersDashboard />
+              </ProtectedRoute>
+            }
+          />
+        </Routes>
+      </BrowserRouter>
+    </AuthProvider>
   );
 }
 

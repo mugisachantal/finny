@@ -1,9 +1,9 @@
 import { useState } from "react";
+import { GiTakeMyMoney } from "react-icons/gi";
+import { TbHistoryToggle } from "react-icons/tb";
 
 export const QuickActions = () => {
   const [amount, setAmount] = useState("200000");
-  const [message, setMessage] = useState("");
-  const [recommendation, setRecommendation] = useState<string | null>(null);
   const [chatAnswer, setChatAnswer] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
@@ -16,47 +16,85 @@ export const QuickActions = () => {
         requestedAmount: Number(amount),
         requestedTenure: 30,
         urgency: "medium",
-        borrowerProfile: { incomeBand: "low", borrowingExperience: "first_time" },
+        borrowerProfile: {
+          incomeBand: "low",
+          borrowingExperience: "first_time",
+        },
       }),
     });
     const data = await response.json();
-    setRecommendation(data.recommendations?.[0]?.name ? `Top match: ${data.recommendations[0].name} — UGX ${data.recommendations[0].totalRepayment}` : "No recommendation available yet.");
+    setChatAnswer(
+      data.recommendations?.[0]?.name
+        ? `Top match: ${data.recommendations[0].name} — UGX ${data.recommendations[0].totalRepayment}`
+        : "No recommendation available yet.",
+    );
     setLoading(false);
   };
 
-  const askChat = async () => {
-    if (!message.trim()) return;
-    const response = await fetch("/api/finny/chat", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        message,
-        userProfile: { income_band: "low", education_level: "secondary", region: "kampala" },
-        currentApplication: { requested_amount: Number(amount), requested_tenure_days: 30, purpose: "emergency" },
-      }),
-    });
-    const data = await response.json();
-    setChatAnswer(data.answer || "I can help explain loan costs and fraud warnings.");
-    setMessage("");
-  };
 
   return (
-    <div className="w-md p-5 border rounded-3xl space-y-4 bg-white">
-      <div className="space-y-2">
-        <label className="text-sm font-medium">Loan amount (UGX)</label>
-        <input value={amount} onChange={(event) => setAmount(event.target.value)} className="w-full border rounded-lg px-3 py-2" />
+    <div className="w-xl space-y-10 flex flex-col items-center justify-center min-h-[40vh] pt-24">
+      <div className="w-full text-center">
+        <h1 className="text-4xl font-medium">Welcome Back, Jerome !</h1>
+      </div>
+      <div className="flex items-center flex-col justify-center p-2 border rounded-md space-y-4">
+        <div className="flex items-end w-full justify-between">
+          <div className="flex space-x-5 items-center w-full px-3">
+            <label className="text-sm font-medium whitespace-nowrap">
+              Amount (UGX)
+            </label>
+            <input
+              value={amount}
+              onChange={(event) => setAmount(event.target.value)}
+              className="w-full px-3 py-2 outline-none font-semibold text-lg"
+            />
+          </div>
+
+          <button
+            onClick={getRecommendation}
+            className="w-fit bg-[#BA5A31] text-white rounded-sm h-10 px-6 whitespace-nowrap font-medium cursor-pointer"
+            disabled={loading}
+          >
+            {loading ? "Looking..." : "Find Loans"}
+          </button>
+        </div>
+        {/*<div className="flex items-center space-x-2 w-full">
+          <span className="px-5 py-1 text-sm bg-teal-500/50 rounded-[6px]">
+            35,000
+          </span>
+          <span className="px-5 py-1 text-sm bg-teal-500/50 rounded-[6px]">
+            35,000
+          </span>
+          <span className="px-5 py-1 text-sm bg-teal-500/50 rounded-[6px]">
+            35,000
+          </span>
+          <span className="px-5 py-1 text-sm bg-teal-500/50 rounded-[6px]">
+            35,000
+          </span>
+        </div>*/}
       </div>
 
-      <button onClick={getRecommendation} className="w-full bg-[#BA5A31] text-white rounded-lg h-10" disabled={loading}>
-        {loading ? "Checking options..." : "Get recommendation"}
-      </button>
-      {recommendation && <p className="text-sm text-slate-700">{recommendation}</p>}
-
-      <div className="space-y-2">
-        <label className="text-sm font-medium">Ask Finny</label>
-        <input value={message} onChange={(event) => setMessage(event.target.value)} placeholder="Is this loan safe?" className="w-full border rounded-lg px-3 py-2" />
-        <button onClick={askChat} className="w-full border rounded-lg h-10">Ask</button>
+      <div className="grid grid-cols-3 gap-6 w-full">
+        <div className="border w-full flex flex-col items-center justify-center p-2 rounded-md">
+          <div className="w-1/3 aspect-square flex items-center justify-center">
+            <GiTakeMyMoney className="text-4xl" />
+          </div>
+          <h2 className="text-xl font-medium text-center py-3">Quick Loan</h2>
+        </div>
+        <div className="border w-full flex flex-col items-center justify-center p-2 rounded-md">
+          <div className="w-1/3 aspect-square flex items-center justify-center">
+            <TbHistoryToggle className="text-4xl" />
+          </div>
+          <h2 className="text-xl font-medium text-center py-3">Quick Loan</h2>
+        </div>
+        <div className="border w-full flex flex-col items-center justify-center p-2 rounded-md">
+          <div className="w-1/3 aspect-square flex items-center justify-center">
+            <GiTakeMyMoney className="text-4xl" />
+          </div>
+          <h2 className="text-xl font-medium text-center py-3">Quick Loan</h2>
+        </div>
       </div>
+
       {chatAnswer && <p className="text-sm text-slate-700">{chatAnswer}</p>}
     </div>
   );

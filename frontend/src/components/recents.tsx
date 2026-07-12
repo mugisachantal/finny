@@ -12,7 +12,7 @@ export const Recents = () => {
           <span>Full History</span> <LuChevronRight />
         </a>
       </div>
-      <div className="py-2 pl-4 w-full min-h-10 rounded-md bg-dust-grey">
+      <div className="py-2 pl-4 w-full min-h-10 rounded-md bg-dust-grey/40">
         <div className="flex items-center justify-between">
           <p className="text-medium">Quick Sent loan successful</p>
           <p className="text-lg text-red-500/70 hover:text-xl p-2 pointer-cursor">

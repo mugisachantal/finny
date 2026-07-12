@@ -1,3 +1,4 @@
+import { IoInformationSharp } from "react-icons/io5";
 import { LuChevronRight } from "react-icons/lu";
 
 export const TopLoaners = () => {
@@ -50,20 +51,7 @@ export const TopLoaners = () => {
                 <span className="font-bold">{item.interestRate}</span> interest
               </span>
               <div className="size-7 rounded-full border border-zinc-300 flex items-center justify-center cursor-pointer">
-                <svg
-                  width="9"
-                  height="11"
-                  viewBox="0 0 9 11"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    d="M7.357.5c.303 0 .594.117.808.325s.335.491.335.786v8.334a.54.54 0 0 1-.076.277.584.584 0 0 1-.779.205L5.067 8.995a1.17 1.17 0 0 0-1.134 0l-2.578 1.432a.584.584 0 0 1-.779-.205.54.54 0 0 1-.076-.277V1.61c0-.295.12-.577.335-.786A1.16 1.16 0 0 1 1.643.5z"
-                    stroke="#27272a"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                </svg>
+                <IoInformationSharp />
               </div>
             </div>
 

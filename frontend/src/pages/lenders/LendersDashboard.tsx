@@ -1,22 +1,9 @@
 import { useState } from "react";
 import { Link } from "react-router";
-import {
-  LuChevronDown,
-  LuUserRound,
-  LuSettings,
-  LuLogOut,
-  LuSearch,
-  LuBell,
-} from "react-icons/lu";
+import { Navbar } from "@/components/navbar";
 import ApplicationsTab from "@/components/lenders/ApplicationsTab";
 import DashboardTab from "@/components/lenders/DashboardTab";
-import {
-  DropdownMenu,
-  DropdownMenuTrigger,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-} from "@/components/ui/dropdown-menu";
+import LoansTab from "@/components/lenders/LoansTab";
 
 type TabId = "dashboard" | "applications" | "loans";
 
@@ -36,15 +23,11 @@ const LendersDashboard = () => {
   const [active, setActive] = useState<TabId>("dashboard");
 
   return (
-    <div className="flex flex-col h-screen">
-      <header className="flex items-center justify-center border-b border-border bg-background px-6 py-3">
-        <div className="flex items-center justify-between w-full max-w-7xl">
-          <div className="flex items-center gap-8">
-          <Link to="/" className="flex items-center gap-2.5 no-underline">
-            <img src="/logo.svg" className="w-8 h-8 shrink-0" />
-            <h1 className="text-xl font-semibold text-foreground">finny</h1>
-          </Link>
+    <div className="flex flex-col min-h-screen bg-background">
+      <Navbar />
 
+      <div className="sticky top-20 z-40 border-b border-border bg-background px-6 py-2">
+        <div className="max-w-7xl mx-auto flex items-center justify-between">
           <nav className="flex items-center gap-1">
             {navLinks.map(({ id, label }) => {
               const isActive = active === id;
@@ -63,51 +46,24 @@ const LendersDashboard = () => {
               );
             })}
           </nav>
-        </div>
 
-        <div className="flex items-center gap-2">
-          <button className="flex items-center justify-center w-9 h-9 rounded-lg text-muted-foreground hover:bg-accent/20 hover:text-foreground transition-colors cursor-pointer">
-            <LuSearch size={18} />
-          </button>
-          <button className="flex items-center justify-center w-9 h-9 rounded-lg text-muted-foreground hover:bg-accent/20 hover:text-foreground transition-colors cursor-pointer">
-            <LuBell size={18} />
-          </button>
-
-          <DropdownMenu>
-            <DropdownMenuTrigger className="flex items-center space-x-2 pl-3 pr-1.5 py-1.5 rounded-lg hover:bg-accent/20 transition-colors cursor-pointer outline-none">
-              <LuChevronDown size={16} className="text-muted-foreground" />
-              <span className="text-sm font-medium text-foreground">John Doe</span>
-              <button className="bg-primary text-primary-foreground h-9 w-9 flex items-center justify-center rounded-full">
-                <LuUserRound size={16} />
-              </button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" sideOffset={8}>
-              <DropdownMenuItem>
-                <LuUserRound size={16} />
-                Profile
-              </DropdownMenuItem>
-              <DropdownMenuItem>
-                <LuSettings size={16} />
-                Settings
-              </DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem variant="destructive">
-                <LuLogOut size={16} />
-                Logout
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+          <Link
+            to="/"
+            className="text-sm text-muted-foreground hover:text-foreground transition-colors no-underline"
+          >
+            Back to Home
+          </Link>
         </div>
-        </div>
-      </header>
+      </div>
 
-      <main className="flex-1 bg-background p-8 overflow-auto">
+      <main className="flex-1 p-8 overflow-auto pt-6">
         <div className="max-w-7xl mx-auto w-full">
           <h1 className="text-3xl font-semibold text-foreground mb-6">
             {titles[active]}
           </h1>
           {active === "dashboard" && <DashboardTab />}
           {active === "applications" && <ApplicationsTab />}
+          {active === "loans" && <LoansTab />}
         </div>
       </main>
     </div>
