@@ -111,7 +111,6 @@ export default function UserOnboarding() {
     if (livelinessImageRef.current?.files?.[0]) {
       formData.append("liveliness_image", livelinessImageRef.current.files[0]);
     }
-
     setIsSubmitting(true);
     try {
       const res = await fetch("/api/v1/auth/register", {
@@ -216,6 +215,9 @@ export default function UserOnboarding() {
         </label>
       </div>
 
+      {/* Liveliness / Selfie Image upload disabled for now. */}
+
+
       <div className="space-y-2">
         <p className={labelClass}>Liveliness / Selfie Image</p>
         <label className="block cursor-pointer rounded-[1.5rem] border-2 border-dashed border-[color:var(--color-dust-grey)] p-6 text-center text-[color:var(--color-ebony)] transition-colors hover:border-[color:var(--color-muted-teal)] hover:bg-[color:var(--color-soft-linen)]">
@@ -230,7 +232,6 @@ export default function UserOnboarding() {
           />
         </label>
       </div>
-
       <div className="rounded-2xl border border-[color:var(--color-dust-grey)] bg-[color:var(--color-soft-linen)] px-4 py-4">
         <label className="flex items-start gap-3 text-sm text-[color:var(--color-charcoal)] cursor-pointer">
           <input

@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use App\Support\DistrictRegionMap;
+
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -83,8 +83,15 @@ class Borrower extends Authenticatable
      */
     public function getRegionAttribute(): string
     {
-        return DistrictRegionMap::regionFor($this->district);
+        // District-to-region mapping helper may not exist in all deployments.
+        // Fail gracefully to avoid breaking registration responses.
+        if (!class_exists(\App\Support\DistrictRegionMap::class)) {
+            return 'unknown';
+        }
+
+        return \App\Support\DistrictRegionMap::regionFor($this->district);
     }
+
 
     public function loanApplications()
     {

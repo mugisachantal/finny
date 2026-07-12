@@ -1,15 +1,31 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { Link, useNavigate } from "react-router";
+import { useAuth } from "@/context/AuthContext";
+import type { AuthUser } from "@/context/AuthContext";
 
 export default function Signup() {
   const navigate = useNavigate();
+  const { login } = useAuth();
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [fullName, setFullName] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
   const [email, setEmail] = useState("");
+  const [dateOfBirth, setDateOfBirth] = useState("");
+  const [incomeBracket, setIncomeBracket] = useState("");
+  const [educationLevel, setEducationLevel] = useState("");
+  const [district, setDistrict] = useState("");
+  const [address, setAddress] = useState("");
+  const [subcounty, setSubcounty] = useState("");
+  const [village, setVillage] = useState("");
   const [password, setPassword] = useState("");
   const [passwordConfirmation, setPasswordConfirmation] = useState("");
+  const ninImageRef = useRef<HTMLInputElement>(null);
+  const livelinessImageRef = useRef<HTMLInputElement>(null);
+  const [ninImageName, setNinImageName] = useState("");
+  const [livelinessImageName, setLivelinessImageName] = useState("");
+  const [termsAccepted, setTermsAccepted] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const EyeOff = () => (
@@ -31,7 +47,7 @@ export default function Signup() {
   const inputClass = "w-full rounded-xl border border-[color:var(--color-dust-grey)] bg-white px-4 py-3 text-sm text-[color:var(--color-charcoal)] outline-none transition-all duration-200 placeholder:text-[color:var(--color-charcoal)]/40 focus:border-[color:var(--color-muted-teal)] focus:shadow-[0_0_0_4px_rgba(164,194,165,0.16)]";
   const toggleBtnClass = "absolute inset-y-0 right-3 my-auto flex h-8 w-8 items-center justify-center rounded-full text-[color:var(--color-ebony)] transition hover:bg-[color:var(--color-soft-linen)]";
 
-  const handleSubmit = (event: React.FormEvent) => {
+  const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     setError(null);
 
@@ -44,11 +60,74 @@ export default function Signup() {
       return;
     }
 
-    localStorage.setItem(
-      "finny_registration_draft",
-      JSON.stringify({ full_name: fullName, phone_number: phoneNumber, email, password, password_confirmation: passwordConfirmation })
-    );
-    navigate("/onboarding");
+    if (!termsAccepted) {
+      setError("You must accept the Terms and Conditions to continue.");
+      return;
+    }
+
+    if (!ninImageRef.current?.files?.[0]) {
+      setError("A photo of your National ID is required.");
+      return;
+    }
+
+    if (!livelinessImageRef.current?.files?.[0]) {
+      setError("A verification photo is required.");
+      return;
+    }
+
+    setIsSubmitting(true);
+    try {
+      const formData = new FormData();
+      formData.append("full_name", fullName);
+      formData.append("date_of_birth", dateOfBirth);
+
+      // Backend expects exact format: ^\+256[0-9]{9}$ (no spaces)
+      // e.g. +2567XXXXXXXX
+      const normalizedPhone = phoneNumber.replace(/\s+/g, "");
+      formData.append("phone_number", normalizedPhone);
+
+      if (email) formData.append("email", email);
+      formData.append("password", password);
+      formData.append("password_confirmation", passwordConfirmation);
+      formData.append("income_bracket", incomeBracket);
+      formData.append("district", district);
+      formData.append("education_level", educationLevel);
+      if (address) formData.append("address", address);
+      if (subcounty) formData.append("subcounty", subcounty);
+      if (village) formData.append("village", village);
+      formData.append("terms_accepted", termsAccepted ? "1" : "0");
+      formData.append("nin_image", ninImageRef.current.files[0]);
+      formData.append("liveliness_image", livelinessImageRef.current.files[0]);
+
+      const res = await fetch("/api/v1/auth/register", {
+        method: "POST",
+        headers: { Accept: "application/json" },
+        body: formData,
+      });
+
+      const data = (await res.json()) as {
+        message: string;
+        data?: { token: string; borrower: AuthUser };
+        errors?: Record<string, string[]>;
+      };
+
+      // Debug: show exact backend validation errors in the browser console
+      // eslint-disable-next-line no-console
+      console.log("Register response data:", data);
+
+      if (!res.ok) {
+        const firstError = Object.values(data.errors ?? {})[0]?.[0];
+        setError(firstError ?? data.message ?? "Registration failed. Please check your details.");
+        return;
+      }
+
+      login(data.data!.token, data.data!.borrower);
+      navigate("/home");
+    } catch {
+      setError("Network error. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -71,10 +150,15 @@ export default function Signup() {
             </div>
           ) : null}
 
-          <form className="space-y-4" onSubmit={handleSubmit}>
+          <form className="space-y-5" onSubmit={(e) => void handleSubmit(e)}>
             <label className="block">
               <span className="mb-2 block text-sm font-medium text-[color:var(--color-ebony)]">Full Name</span>
               <input type="text" placeholder="Enter your full name" autoComplete="name" required value={fullName} onChange={(e) => setFullName(e.target.value)} className={inputClass} />
+            </label>
+
+            <label className="block">
+              <span className="mb-2 block text-sm font-medium text-[color:var(--color-ebony)]">Date of Birth</span>
+              <input type="date" required value={dateOfBirth} onChange={(e) => setDateOfBirth(e.target.value)} className={inputClass} />
             </label>
 
             <label className="block">
@@ -87,6 +171,50 @@ export default function Signup() {
                 Email Address <span className="font-normal text-[color:var(--color-charcoal)]/50">(optional)</span>
               </span>
               <input type="email" placeholder="Enter your email address" autoComplete="email" value={email} onChange={(e) => setEmail(e.target.value)} className={inputClass} />
+            </label>
+
+            <label className="block">
+              <span className="mb-2 block text-sm font-medium text-[color:var(--color-ebony)]">Monthly Income Bracket</span>
+              <select required value={incomeBracket} onChange={(e) => setIncomeBracket(e.target.value)} className={inputClass}>
+                <option value="">Select income bracket</option>
+                <option value="under_100k">Under 100,000 UGX</option>
+                <option value="100k_300k">100,000 - 300,000 UGX</option>
+                <option value="300k_600k">300,000 - 600,000 UGX</option>
+                <option value="600k_1m">600,000 - 1,000,000 UGX</option>
+                <option value="over_1m">Over 1,000,000 UGX</option>
+              </select>
+            </label>
+
+            <label className="block">
+              <span className="mb-2 block text-sm font-medium text-[color:var(--color-ebony)]">Education Level</span>
+              <select required value={educationLevel} onChange={(e) => setEducationLevel(e.target.value)} className={inputClass}>
+                <option value="">Select education level</option>
+                <option value="none">None</option>
+                <option value="primary">Primary</option>
+                <option value="secondary">Secondary</option>
+                <option value="tertiary">Tertiary (University / College)</option>
+                <option value="vocational">Vocational / Technical</option>
+              </select>
+            </label>
+
+            <label className="block">
+              <span className="mb-2 block text-sm font-medium text-[color:var(--color-ebony)]">District</span>
+              <input type="text" placeholder="Enter your district" required value={district} onChange={(e) => setDistrict(e.target.value)} className={inputClass} />
+            </label>
+
+            <label className="block">
+              <span className="mb-2 block text-sm font-medium text-[color:var(--color-ebony)]">Address <span className="font-normal text-[color:var(--color-charcoal)]/50">(optional)</span></span>
+              <input type="text" placeholder="Enter your address" value={address} onChange={(e) => setAddress(e.target.value)} className={inputClass} />
+            </label>
+
+            <label className="block">
+              <span className="mb-2 block text-sm font-medium text-[color:var(--color-ebony)]">Subcounty <span className="font-normal text-[color:var(--color-charcoal)]/50">(optional)</span></span>
+              <input type="text" placeholder="Enter your subcounty" value={subcounty} onChange={(e) => setSubcounty(e.target.value)} className={inputClass} />
+            </label>
+
+            <label className="block">
+              <span className="mb-2 block text-sm font-medium text-[color:var(--color-ebony)]">Village <span className="font-normal text-[color:var(--color-charcoal)]/50">(optional)</span></span>
+              <input type="text" placeholder="Enter your village" value={village} onChange={(e) => setVillage(e.target.value)} className={inputClass} />
             </label>
 
             <label className="block">
@@ -109,8 +237,27 @@ export default function Signup() {
               </div>
             </label>
 
+            <div className="space-y-3 rounded-2xl border border-[color:var(--color-dust-grey)] bg-[color:var(--color-soft-linen)] p-4">
+              <div className="space-y-2">
+                <span className="block text-sm font-medium text-[color:var(--color-ebony)]">National ID Upload</span>
+                <input ref={ninImageRef} type="file" accept="image/jpeg,image/png" required onChange={(e) => setNinImageName(e.target.files?.[0]?.name ?? "")} className="block w-full text-sm text-[color:var(--color-charcoal)] file:mr-4 file:rounded-lg file:border-0 file:bg-[color:var(--color-ebony)] file:px-4 file:py-2 file:text-sm file:font-semibold file:text-white" />
+                <p className="text-xs text-[color:var(--color-charcoal)]/70">{ninImageName || "JPEG or PNG, max 4 MB"}</p>
+              </div>
+
+              <div className="space-y-2">
+                <span className="block text-sm font-medium text-[color:var(--color-ebony)]">Liveliness / Selfie Upload</span>
+                <input ref={livelinessImageRef} type="file" accept="image/jpeg,image/png" required onChange={(e) => setLivelinessImageName(e.target.files?.[0]?.name ?? "")} className="block w-full text-sm text-[color:var(--color-charcoal)] file:mr-4 file:rounded-lg file:border-0 file:bg-[color:var(--color-ebony)] file:px-4 file:py-2 file:text-sm file:font-semibold file:text-white" />
+                <p className="text-xs text-[color:var(--color-charcoal)]/70">{livelinessImageName || "JPEG or PNG, max 4 MB"}</p>
+              </div>
+
+              <label className="flex items-start gap-3 text-sm text-[color:var(--color-charcoal)] cursor-pointer">
+                <input type="checkbox" className="mt-1 h-4 w-4 rounded border-[color:var(--color-dust-grey)]" checked={termsAccepted} onChange={(e) => setTermsAccepted(e.target.checked)} />
+                <span>I agree to the Terms &amp; Conditions and Privacy Policy.</span>
+              </label>
+            </div>
+
             <button type="submit" className="mt-2 w-full rounded-xl bg-[color:var(--color-ebony)] px-4 py-3.5 text-sm font-semibold text-white transition-opacity duration-200 hover:opacity-95">
-              Continue
+              {isSubmitting ? "Creating account…" : "Create account"}
             </button>
           </form>
 
