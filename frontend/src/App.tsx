@@ -5,7 +5,6 @@ import Home from "./pages/Home";
 import LenderOnboarding from "./pages/LenderOnboarding";
 import LendersDashboard from "./pages/lenders/LendersDashboard";
 import Login from "./pages/Login";
-import UserOnboarding from "./pages/User_onboarding";
 import Signup from "./pages/Signup";
 import Landing from "./pages/Landing";
 
@@ -18,14 +17,6 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
           <Route path="/register" element={<Signup />} />
-          <Route
-            path="/onboarding"
-            element={
-              <ProtectedRoute>
-                <UserOnboarding />
-              </ProtectedRoute>
-            }
-          />
           <Route
             path="/lender-onboarding"
             element={
