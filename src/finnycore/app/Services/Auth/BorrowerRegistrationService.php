@@ -19,7 +19,12 @@ class BorrowerRegistrationService
         $ninPath = $ninImage->store('kyc/nin', 'private');
         $livelinessPath = $livelinessImage->store('kyc/liveliness', 'private');
 
-        $borrower = Borrower::create([
+        // Borrower::$fillable intentionally excludes password.
+        // Since the DB column is NOT NULL, we must set the password hash
+        // via forceFill() BEFORE the first save/insert.
+        $passwordHash = Hash::make($data['password']);
+
+        $borrower = new Borrower([
             'full_name' => $data['full_name'],
             'date_of_birth' => $data['date_of_birth'],
             'phone_number' => $data['phone_number'],
@@ -32,14 +37,11 @@ class BorrowerRegistrationService
             'subcounty' => $data['subcounty'] ?? null,
             'village' => $data['village'] ?? null,
             'education_level' => $data['education_level'],
-            // MVP simplification: no manual KYC review queue exists yet
-            // (see SDD 4.1.9). Status is flipped to 'active' below
-            // immediately after the images are stored.
             'status' => 'pending_kyc',
         ]);
 
         $borrower->forceFill([
-            'password' => Hash::make($data['password']),
+            'password' => $passwordHash,
             'nin_image_path' => $ninPath,
             'liveliness_check_path' => $livelinessPath,
             'liveliness_verified' => false,

@@ -80,7 +80,12 @@ export default function Signup() {
       const formData = new FormData();
       formData.append("full_name", fullName);
       formData.append("date_of_birth", dateOfBirth);
-      formData.append("phone_number", phoneNumber);
+
+      // Backend expects exact format: ^\+256[0-9]{9}$ (no spaces)
+      // e.g. +2567XXXXXXXX
+      const normalizedPhone = phoneNumber.replace(/\s+/g, "");
+      formData.append("phone_number", normalizedPhone);
+
       if (email) formData.append("email", email);
       formData.append("password", password);
       formData.append("password_confirmation", passwordConfirmation);
@@ -90,7 +95,7 @@ export default function Signup() {
       if (address) formData.append("address", address);
       if (subcounty) formData.append("subcounty", subcounty);
       if (village) formData.append("village", village);
-      formData.append("terms_accepted", "1");
+      formData.append("terms_accepted", termsAccepted ? "1" : "0");
       formData.append("nin_image", ninImageRef.current.files[0]);
       formData.append("liveliness_image", livelinessImageRef.current.files[0]);
 
@@ -105,6 +110,10 @@ export default function Signup() {
         data?: { token: string; borrower: AuthUser };
         errors?: Record<string, string[]>;
       };
+
+      // Debug: show exact backend validation errors in the browser console
+      // eslint-disable-next-line no-console
+      console.log("Register response data:", data);
 
       if (!res.ok) {
         const firstError = Object.values(data.errors ?? {})[0]?.[0];
