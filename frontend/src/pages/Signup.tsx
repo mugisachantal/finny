@@ -116,8 +116,10 @@ export default function Signup() {
       console.log("Register response data:", data);
 
       if (!res.ok) {
-        const firstError = Object.values(data.errors ?? {})[0]?.[0];
-        setError(firstError ?? data.message ?? "Registration failed. Please check your details.");
+        const fieldErrors = Object.entries(data.errors ?? {})
+          .map(([field, messages]) => `${field}: ${messages.join(" ")}`)
+          .join(" \n");
+        setError(fieldErrors || data.message || "Registration failed. Please check your details.");
         return;
       }
 

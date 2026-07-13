@@ -16,7 +16,7 @@ class RegisterBorrowerRequest extends FormRequest
         return [
             'full_name' => ['required', 'string', 'max:150'],
             'date_of_birth' => ['required', 'date', 'before:-18 years'],
-            'email' => ['required', 'email', 'max:255', 'unique:borrowers,email'],
+            'email' => ['nullable', 'email', 'max:255', 'unique:borrowers,email'],
             'phone_number' => [
                 'nullable', 'string', 'regex:/^\+256[0-9]{9}$/',
                 'unique:borrowers,phone_number',

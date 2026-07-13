@@ -9,7 +9,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('borrowers', function (Blueprint $table) {
-            $table->string('email')->nullable(false)->change();
+            $table->string('email')->nullable()->change();
             $table->string('phone_number', 20)->nullable()->change();
         });
     }
@@ -17,7 +17,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('borrowers', function (Blueprint $table) {
-            $table->string('email')->nullable()->change();
+            $table->string('email')->nullable(false)->change();
             $table->string('phone_number', 20)->nullable(false)->change();
         });
     }

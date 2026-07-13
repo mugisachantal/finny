@@ -27,7 +27,7 @@ class BorrowerRegistrationService
         $borrower = new Borrower([
             'full_name' => $data['full_name'],
             'date_of_birth' => $data['date_of_birth'],
-            'phone_number' => $data['phone_number'],
+            'phone_number' => $data['phone_number'] ?? null,
             'email' => $data['email'] ?? null,
             'monthly_income_range' => $data['monthly_income_range'] ?? null,
             'income_bracket' => $data['income_bracket'],
