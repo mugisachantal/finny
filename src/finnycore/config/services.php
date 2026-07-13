@@ -35,4 +35,11 @@ return [
         ],
     ],
 
+    'intelligence' => [
+        'url' => env('INTELLIGENCE_API_URL', 'http://localhost:8001'),
+    ],
+    'mock_lender_gateway' => [
+        'url' => env('APP_URL', 'http://localhost:8000') . '/api',
+    ],
+
 ];
